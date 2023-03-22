@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/produck/mould/issues"
   },
-  "homepage": "https://github.com/produck/mould#readme"
+  "homepage": "https://github.com/produck/mould#readme",
+  "devDependencies": {
+    "rollup": "^3.20.0"
+  }
 }
