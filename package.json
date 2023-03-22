@@ -1,0 +1,17 @@
+{
+  "name": "@produck/mould-workspace",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "packages/mould"
+  ],
+  "devDependencies": {
+    "c8": "^7.13.0",
+    "eslint": "^8.36.0",
+    "lerna": "^6.5.1"
+  }
+}

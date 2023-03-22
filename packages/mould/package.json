@@ -1,0 +1,28 @@
+{
+  "name": "@produck/mould",
+  "version": "0.0.0",
+  "description": "A new dynamic type system for ECMAScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/produck/mould.git"
+  },
+  "keywords": [
+    "type",
+    "schema",
+    "validate",
+    "normalize"
+  ],
+  "author": "ChaosLee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/produck/mould/issues"
+  },
+  "homepage": "https://github.com/produck/mould#readme"
+}
