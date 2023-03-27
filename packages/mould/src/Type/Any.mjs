@@ -1,11 +1,7 @@
 import * as Utils from '../Utils/index.mjs';
-import { Expression } from './Native/index.mjs';
+import { Member, Schema as NativeSchema } from './Native/index.mjs';
 
-export const Schema = class AnySchema {
-	get required() {
-		return Expression.get(this).Value === null;
-	}
-
+export const Schema = class AnySchema extends NativeSchema {
 	expect(expection) {
 		if (!Utils.Type.String(expection)) {
 			Utils.Error.Throw.Type('expection', 'string');
@@ -36,21 +32,12 @@ export const Schema = class AnySchema {
 		return this.derive({ Value });
 	}
 
-	derive(_expression = {}) {
-		const expression = this._mixin({
-			...Expression.get(this),
-			..._expression,
-		});
-
-		return new this.Constructor(expression);
-	}
-
 	parse(_any, _empty = false) {
 		if (!Utils.Type.Boolean(_empty)) {
 			Utils.Error.Throw.Type('_empty', 'boolean');
 		}
 
-		const { expection, Value, assert } = Expression.get(this);
+		const { expection, Value, assert } = Member.get(this).expression;
 
 		if (_empty) {
 			if (Value === null) {
@@ -72,28 +59,17 @@ export const Schema = class AnySchema {
 		return _any;
 	}
 
-	_mixin(_expression) {
-		const exporession = {
+	static _expression() {
+		return {
 			expection: 'any',
 			Value: null,
 			assert: () => {},
 		};
-
-		const {
-			expection: _expection = exporession.expection,
-			Value: _Value = exporession.Value,
-			assert: _assert = exporession.assert,
-		} = _expression;
-
-		exporession.expection = _expection;
-		exporession.Value = _Value;
-		exporession.assert = _assert;
-
-		return exporession;
 	}
 
-	constructor(_expression = {}) {
-		Expression.set(this, this._mixin(_expression));
-		Object.freeze(this);
+	static _merge(target, _source) {
+		const expression = { ...target, ..._source };
+
+		return expression;
 	}
 };

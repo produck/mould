@@ -2,20 +2,23 @@ export class MouldError extends Error {
 	name = 'MouldError';
 }
 
-export const Throw = {
+const throwError = (message, Constructor = Error) => {
+	throw new Constructor(message);
+};
+
+export const Throw = Object.assign(throwError, {
 	Mould(message) {
-		throw new MouldError(message);
+		throwError(message, MouldError);
 	},
 	Type(role, expected) {
-		throw new TypeError(`Invalid "${role}", one "${expected}" expected.`);
+		throwError(`Invalid "${role}", one "${expected}" expected.`, TypeError);
 	},
-};
+});
 
 export const Cause = class MouldCause {
 	type = 'Abstract';
 	detail = {};
 	next = null;
-
 	value = null;
 
 	constructor(_value) {

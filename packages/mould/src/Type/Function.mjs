@@ -1,41 +1,32 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
-import { Expression } from './Native/index.mjs';
+import { Member } from './Native/index.mjs';
 
 const DEFAULT_RETURN = new Any.Schema();
-
-function isArgs(signature) {
-	return signature.args.is(this);
-}
-
-function isReturn(signature) {
-	return signature.ret.is(this);
-}
 
 export const Schema = class FunctionSchema extends Any.Schema {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
-			signatures: [
-				...(this).signatures,
-				{ args: new Tuple.Schema(args), ret },
-			],
+			signatures: [{ args: new Tuple.Schema(args), ret }],
 		});
 	}
 
-	_mixin(_expression) {
-		const expression = {
-			...super._mixin(_expression),
-			signatures: [],
-		};
+	static _merge(target, _source) {
+		const expression = { ...target, ...super._merge(target, _source) };
 
-		const {
-			signatures: _signatures = expression.signatures,
-		} = _expression;
-
-		expression.signatures.push(..._signatures);
+		if (Utils.Type.Array(_source.signatures)) {
+			expression.signatures.push(..._source.signatures);
+		}
 
 		return expression;
+	}
+
+	static _expression() {
+		return {
+			...super._expression(),
+			signatures: [],
+		};
 	}
 
 	_normalize(_function) {
@@ -43,17 +34,30 @@ export const Schema = class FunctionSchema extends Any.Schema {
 			new Utils.Error.Cause(_function).setType('Function').throw();
 		}
 
-		const schema = Expression.get(this);
+		const { expression } = Member.get(this);
 
 		return { [_function.name]: function (..._arguments) {
-			const signatures = schema.signatures.filter(isArgs, _arguments);
-			const _return = _function.apply(this, _arguments);
+			const matchedSignatureList = [];
 
-			if (signatures.some(isReturn, _return)) {
-				return _return;
+			for (const signature of expression.signatures) {
+				if (signature.parameterList.isValid(_arguments)) {
+					matchedSignatureList.push(signature);
+				}
 			}
 
-			throw new Error('Bad return');
+			if (matchedSignatureList.length === 0) {
+				Utils.Error.Throw('Bad arguments.');
+			}
+
+			const _return = _function.apply(this, _arguments);
+
+			for (const signature of matchedSignatureList) {
+				if (signature.returnValue.isValid(_return)) {
+					return _return;
+				}
+			}
+
+			Utils.Error.Throw('Bad return');
 		} }[_function.name];
 	}
 };

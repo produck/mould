@@ -1,1 +1,2 @@
-export * as Expression from './Expression.mjs';
+export * as Member from './Member.mjs';
+export { Schema } from './Schema.mjs';
