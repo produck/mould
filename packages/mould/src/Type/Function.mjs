@@ -13,7 +13,7 @@ export const Schema = class FunctionSchema extends Any.Schema {
 	}
 
 	static _merge(target, _source) {
-		const expression = { ...target, ...super._merge(target, _source) };
+		const expression = { ...target };
 
 		if (Utils.Type.Array(_source.signatures)) {
 			expression.signatures.push(..._source.signatures);
@@ -25,16 +25,19 @@ export const Schema = class FunctionSchema extends Any.Schema {
 	static _expression() {
 		return {
 			...super._expression(),
+			expection: 'function',
 			signatures: [],
 		};
 	}
 
 	_normalize(_function) {
-		if (!Utils.Type.Function(_function)) {
-			new Utils.Error.Cause(_function).setType('Function').throw();
-		}
-
 		const { expression } = Member.get(this);
+		const { expection } = expression;
+
+		if (!Utils.Type.Function(_function)) {
+			new Utils.Error.Cause(_function)
+				.setType('Function').describe({ expection }).throw();
+		}
 
 		return { [_function.name]: function (..._arguments) {
 			const matchedSignatureList = [];
