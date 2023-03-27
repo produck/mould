@@ -8,7 +8,7 @@ export class TupleSchema extends Any.Schema {
 		return this.derive();
 	}
 
-	_value(_tuple) {
+	_normalize(_tuple) {
 		const cause = new Utils.Error.MouldCause(_tuple);
 
 		if (!Utils.Type.Array(_tuple)) {

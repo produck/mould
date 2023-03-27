@@ -1,6 +1,7 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
+import { Expression } from './Native/index.mjs';
 
 const DEFAULT_RETURN = new Any.Schema();
 
@@ -12,51 +13,47 @@ function isReturn(signature) {
 	return signature.ret.is(this);
 }
 
-export class FunctionSchema extends Any.Schema {
-	expection = 'function';
-	signatures = [];
-
+export const Schema = class FunctionSchema extends Any.Schema {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
 			signatures: [
-				...this.signatures,
-				Object.freeze({ args: new Tuple.Schema(args), ret }),
+				...(this).signatures,
+				{ args: new Tuple.Schema(args), ret },
 			],
 		});
 	}
 
-	_mixin(_modifier) {
-		super._mixin(_modifier);
+	_mixin(_expression) {
+		const expression = {
+			...super._mixin(_expression),
+			signatures: [],
+		};
 
 		const {
-			signatures: _signatures = [],
-		} = _modifier;
+			signatures: _signatures = expression.signatures,
+		} = _expression;
 
-		this.signatures.push(..._signatures);
-		Object.freeze(this.signatures);
+		expression.signatures.push(..._signatures);
+
+		return expression;
 	}
 
-	_value(_function) {
-		const cause = new Utils.Error.MouldCause(_function);
-
+	_normalize(_function) {
 		if (!Utils.Type.Function(_function)) {
-			cause.setType('Function').throw();
+			new Utils.Error.Cause(_function).setType('Function').throw();
 		}
 
-		const schema = this;
+		const schema = Expression.get(this);
 
 		return { [_function.name]: function (..._arguments) {
 			const signatures = schema.signatures.filter(isArgs, _arguments);
 			const _return = _function.apply(this, _arguments);
-			const valid = signatures.some(isReturn, _return);
 
-			if (valid) {
+			if (signatures.some(isReturn, _return)) {
 				return _return;
 			}
 
 			throw new Error('Bad return');
 		} }[_function.name];
 	}
-}
-
-export { FunctionSchema as Schema };
+};

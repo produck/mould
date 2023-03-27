@@ -1,37 +1,15 @@
 import * as Utils from '../Utils/index.mjs';
+import { Expression } from './Native/index.mjs';
 
-export class AnySchema {
-	expection = 'any';
-	Value = null;
-	assert = () => {};
-
-	_mixin(_modifier) {
-		const {
-			expection: _expection = this.expection,
-			Value: _Value = this.Value,
-			assert: _assert = this.assert,
-		} = _modifier;
-
-		this.expection = _expection;
-		this.Value = _Value;
-		this.assert = _assert;
-	}
-
-	constructor(_modifier = {}) {
-		this._mixin(_modifier);
-		Object.freeze(this);
-	}
-
+export const Schema = class AnySchema {
 	get required() {
-		return this.Value === null;
+		return Expression.get(this).Value === null;
 	}
 
 	expect(expection) {
 		if (!Utils.Type.String(expection)) {
 			Utils.Error.Throw.Type('expection', 'string');
 		}
-
-		this.expection = expection;
 
 		return this.derive({ expection });
 	}
@@ -58,12 +36,13 @@ export class AnySchema {
 		return this.derive({ Value });
 	}
 
-	/** @returns {typeof this} */
-	derive(modifier = {}) {
-		const { Value, assert, expection } = { ...this, ...modifier };
-		const Constructor = Object.getPrototypeOf(this).constructor;
+	derive(_expression = {}) {
+		const expression = this._mixin({
+			...Expression.get(this),
+			..._expression,
+		});
 
-		return new Constructor({ Value, assert, expection });
+		return new this.Constructor(expression);
 	}
 
 	parse(_any, _empty = false) {
@@ -71,32 +50,50 @@ export class AnySchema {
 			Utils.Error.Throw.Type('_empty', 'boolean');
 		}
 
-		const cause = new Utils.Error.MouldCause(_any);
+		const { expection, Value, assert } = Expression.get(this);
 
-		if (_empty && this.required) {
-			cause.setType('Any').describe({
-				required: this.required,
-				expected: this.expection,
-			}).throw();
+		if (_empty) {
+			if (Value === null) {
+				new Utils.Error.Cause(_any)
+					.setType('Any').describe({ required: true, expection }).throw();
+			} else {
+				return Value();
+			}
 		}
 
-		this._value(_any);
-		this.assert(_any, cause);
+		const value = this._normalize(_any);
 
+		assert(value);
+
+		return value;
+	}
+
+	_normalize(_any) {
 		return _any;
 	}
 
-	is(_any) {
-		try {
-			this.parse(_any);
+	_mixin(_expression) {
+		const exporession = {
+			expection: 'any',
+			Value: null,
+			assert: () => {},
+		};
 
-			return true;
-		} catch {
-			return false;
-		}
+		const {
+			expection: _expection = exporession.expection,
+			Value: _Value = exporession.Value,
+			assert: _assert = exporession.assert,
+		} = _expression;
+
+		exporession.expection = _expection;
+		exporession.Value = _Value;
+		exporession.assert = _assert;
+
+		return exporession;
 	}
 
-	_value() {}
-}
-
-export { AnySchema as Schema };
+	constructor(_expression = {}) {
+		Expression.set(this, this._mixin(_expression));
+		Object.freeze(this);
+	}
+};

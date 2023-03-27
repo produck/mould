@@ -11,7 +11,7 @@ export const Throw = {
 	},
 };
 
-export class MouldCause {
+export const Cause = class MouldCause {
 	type = 'Abstract';
 	detail = {};
 	next = null;
@@ -39,4 +39,4 @@ export class MouldCause {
 
 		throw Object.freeze(this);
 	}
-}
+};
