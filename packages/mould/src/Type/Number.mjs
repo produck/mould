@@ -1,16 +1,15 @@
 import * as Utils from '../Utils/index.mjs';
-import * as Any from './Any.mjs';
+import * as Native from './Native/index.mjs';
 
-export class NumberSchema extends Any.Schema {
-	_value(_number) {
-		const cause = new Utils.Error.MouldCause(_number);
-
+export class NumberSchema extends Native.Schema {
+	_normalize(_number) {
 		if (!Utils.Type.Number(_number)) {
-			cause.setType('Number').throw();
+			new Utils.Error.MouldCause(_number)
+				.setType('Type')
+				.describe({ expected: 'number' })
+				.throw();
 		}
 	}
 }
 
 export { NumberSchema as Schema };
-
-export const Integer = () => new NumberSchema();

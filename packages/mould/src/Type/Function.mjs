@@ -1,11 +1,11 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
-import { Member } from './Native/index.mjs';
+import * as Native from './Native/index.mjs';
 
 const DEFAULT_RETURN = new Any.Schema();
 
-export const Schema = class FunctionSchema extends Any.Schema {
+export class FunctionSchema extends Native.Schema {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
 			signatures: [{ args: new Tuple.Schema(args), ret }],
@@ -30,7 +30,7 @@ export const Schema = class FunctionSchema extends Any.Schema {
 	}
 
 	_normalize(_function) {
-		const { expression } = Member.get(this);
+		const { expression } = Native.Member.get(this);
 
 		if (!Utils.Type.Function(_function)) {
 			new Utils.Error.Cause(_function)
@@ -63,4 +63,6 @@ export const Schema = class FunctionSchema extends Any.Schema {
 			Utils.Error.Throw('Bad return');
 		} }[_function.name];
 	}
-};
+}
+
+export { FunctionSchema as Schema };

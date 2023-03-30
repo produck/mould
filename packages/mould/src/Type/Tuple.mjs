@@ -1,8 +1,8 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
-import { isSchema, Member } from './Native/index.mjs';
+import * as Native from './Native/index.mjs';
 
-export class TupleSchema extends Any.Schema {
+export class TupleSchema extends Native.Schema {
 	like(typeList) {
 		if (!Utils.Type.Array(typeList)) {
 			Utils.Error.Throw.Type('typeList', 'array');
@@ -14,7 +14,7 @@ export class TupleSchema extends Any.Schema {
 		for (const index in typeList) {
 			const element = typeList[index];
 
-			if (!isSchema(element)) {
+			if (!Native.isSchema(element)) {
 				Utils.Error.Throw.Type(`typeList[${index}]`, 'Type');
 			}
 
@@ -51,7 +51,7 @@ export class TupleSchema extends Any.Schema {
 	}
 
 	_normalize(_tuple) {
-		const { expression } = Member.get(this);
+		const { expression } = Native.Member.get(this);
 
 		if (!Utils.Type.Array(_tuple)) {
 			new Utils.Error.MouldCause(_tuple)
@@ -61,5 +61,7 @@ export class TupleSchema extends Any.Schema {
 		}
 	}
 }
+
+Native.Decorator.Spreadable(TupleSchema);
 
 export { TupleSchema as Schema };
