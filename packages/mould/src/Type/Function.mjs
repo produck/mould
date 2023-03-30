@@ -25,18 +25,18 @@ export const Schema = class FunctionSchema extends Any.Schema {
 	static _expression() {
 		return {
 			...super._expression(),
-			expection: 'function',
 			signatures: [],
 		};
 	}
 
 	_normalize(_function) {
 		const { expression } = Member.get(this);
-		const { expection } = expression;
 
 		if (!Utils.Type.Function(_function)) {
 			new Utils.Error.Cause(_function)
-				.setType('Function').describe({ expection }).throw();
+				.setType('Type')
+				.describe({ expected: 'function' })
+				.throw();
 		}
 
 		return { [_function.name]: function (..._arguments) {

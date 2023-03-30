@@ -1,14 +1,27 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
-import { Member } from './Native/index.mjs';
+import { isSchema, Member } from './Native/index.mjs';
 
 export class TupleSchema extends Any.Schema {
-	list() {
+	like(typeList) {
+		if (!Utils.Type.Array(typeList)) {
+			Utils.Error.Throw.Type('typeList', 'array');
+		}
 
-	}
+		const list = [];
+		let restIndex = false;
 
-	rest() {
-		return this.derive();
+		for (const index in typeList) {
+			const element = typeList[index];
+
+			if (!isSchema(element)) {
+				Utils.Error.Throw.Type(`typeList[${index}]`, 'Type');
+			}
+
+			list.push(element);
+		}
+
+		return this.derive({ list, rest: restIndex });
 	}
 
 	static _merge(target, _source) {
@@ -28,25 +41,25 @@ export class TupleSchema extends Any.Schema {
 	static _expression() {
 		return {
 			...super._expression(),
-			expection: 'array as tuple',
 			list: [],
-			rest: null,
+			rest: -1,
 		};
+	}
+
+	get restNotAtLast() {
+		return [];
 	}
 
 	_normalize(_tuple) {
 		const { expression } = Member.get(this);
-		const { expection } = expression;
 
 		if (!Utils.Type.Array(_tuple)) {
 			new Utils.Error.MouldCause(_tuple)
-				.setType('Tuple').describe({ expection }).throw();
+				.setType('Type')
+				.describe({ expected: 'array' })
+				.throw();
 		}
 	}
 }
 
 export { TupleSchema as Schema };
-
-new TupleSchema()
-	.list([])
-	.rest();

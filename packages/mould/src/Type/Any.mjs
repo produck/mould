@@ -2,34 +2,18 @@ import * as Utils from '../Utils/index.mjs';
 import { Member, Schema as NativeSchema } from './Native/index.mjs';
 
 export const Schema = class AnySchema extends NativeSchema {
-	expect(expection) {
-		if (!Utils.Type.String(expection)) {
-			Utils.Error.Throw.Type('expection', 'string');
-		}
-
-		return this.derive({ expection });
-	}
-
-	should(assert) {
-		if (!Utils.Type.Function(assert)) {
-			Utils.Error.Throw.Type('assert', 'function');
-		}
-
-		return this.derive({ assert });
-	}
-
-	default(Value) {
-		if (!Utils.Type.Function(Value)) {
-			Utils.Error.Throw.Type('Value', 'function');
+	default(DefaultValue) {
+		if (!Utils.Type.Function(DefaultValue)) {
+			Utils.Error.Throw.Type('DefaultValue', 'function');
 		}
 
 		try {
-			this.parse(Value());
+			this.parse(DefaultValue());
 		} catch {
-			throw new Error('The returns from Value() is NOT satisfied.');
+			Utils.Error.Throw('The returns from DefaultValue() is NOT satisfied.');
 		}
 
-		return this.derive({ Value });
+		return this.derive({ DefaultValue });
 	}
 
 	parse(_any, _empty = false) {
@@ -37,22 +21,18 @@ export const Schema = class AnySchema extends NativeSchema {
 			Utils.Error.Throw.Type('_empty', 'boolean');
 		}
 
-		const { expection, Value, assert } = Member.get(this).expression;
+		const { expression } = Member.get(this);
+		const { DefaultValue } = expression;
 
 		if (_empty) {
-			if (Value === null) {
-				new Utils.Error.Cause(_any)
-					.setType('Required').describe({ expection }).throw();
+			if (DefaultValue === null) {
+				new Utils.Error.Cause(_any).setType('Required').throw();
 			} else {
-				return Value();
+				return DefaultValue();
 			}
 		}
 
-		const value = this._normalize(_any);
-
-		assert(value);
-
-		return value;
+		return this._normalize(_any);
 	}
 
 	_normalize(_any) {
@@ -60,11 +40,7 @@ export const Schema = class AnySchema extends NativeSchema {
 	}
 
 	static _expression() {
-		return {
-			expection: 'any',
-			Value: null,
-			assert: () => {},
-		};
+		return { DefaultValue: null, assert: () => {} };
 	}
 
 	static _merge(target, _source) {
