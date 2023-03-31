@@ -1,48 +1,47 @@
 import * as Utils from '../Utils/index.mjs';
-import * as Native from './Native/index.mjs';
+import * as Abstract from './Abstract.mjs';
+import * as Decorator from './Decorator.mjs';
 
-export class TupleType extends Native.Type {
+function toType(type, index) {
+	if (!Abstract.isType(type)) {
+		Utils.Error.Throw.Type(`typeList[${index}]`, 'Type');
+	}
+
+	if (type.isSpread) {
+		if (isFinite(type.length)) {
+			if (isFinite(this.count)) {
+				Utils.Error.Throw('There MUST be 1 spread type at most.');
+			}
+
+			this.count = Infinity;
+		} else {
+			this.count += type.length;
+		}
+	} else {
+		this.count += 1;
+	}
+
+	return type;
+}
+
+export class TupleType extends Abstract.Type {
 	format(typeList) {
 		if (!Utils.Type.Array(typeList)) {
 			Utils.Error.Throw.Type('typeList', 'array');
 		}
 
-		const elements = [];
+		const context = { count: 0 };
+		const elements = typeList.map(toType, context);
 
-		for (const index in typeList) {
-			const element = typeList[index];
-
-			if (!Native.isSchema(element)) {
-				Utils.Error.Throw.Type(`typeList[${index}]`, 'Type');
-			}
-
-			elements.push(element);
-		}
-
-		return this.derive({ elements });
+		return this.derive({ elements, length: context.count });
 	}
 
 	static _expression() {
-		return { ...super._expression(), elementListType: [] };
+		return { ...super._expression(), elementListType: [], length: 0 };
 	}
 
 	_length() {
-		let count = 0;
-
-		for (const type of this._meta.expression.list) {
-			if (type.isSpread) {
-				if (isFinite(type.length)) {
-					count = Infinity;
-					break;
-				}
-
-				count += type.length;
-			} else {
-				count += 1;
-			}
-		}
-
-		return count;
+		return this._meta.expression.length;
 	}
 
 	_normalize(_tuple) {
@@ -57,6 +56,6 @@ export class TupleType extends Native.Type {
 	}
 }
 
-Native.Decorator.Spreadable(TupleType);
+Decorator.Spreadable(TupleType);
 
 export { TupleType as Type };

@@ -1,6 +1,6 @@
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '../Utils/index.mjs';
 
-export class Type {
+export class AbstractType {
 	constructor() {
 		const constructor = new.target;
 
@@ -30,7 +30,11 @@ export class Type {
 		return this.derive({ DefaultValue });
 	}
 
-	parse(_any, _empty = false) {
+	parse(_any, _empty = false, _deepth = 0) {
+		if (_deepth > 1000) {
+			Utils.Error.Throw('Parsing too deep.', RangeError);
+		}
+
 		if (!Utils.Type.Boolean(_empty)) {
 			Utils.Error.Throw.Type('_empty', 'boolean');
 		}
@@ -61,10 +65,13 @@ export class Type {
 	}
 
 	static _expression() {
-		return { DefaultValue: null, isSpread: false };
+		return { DefaultValue: null, isSpread: false, runtime: false };
 	}
 
 	static _merge(target, _source) {
 		return { ...target, ..._source };
 	}
 }
+
+export const isType = any => Utils.Type.Instance(any, AbstractType);
+export { AbstractType as Type };

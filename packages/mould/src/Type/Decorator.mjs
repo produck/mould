@@ -1,8 +1,8 @@
-import * as Native from '../../Utils/index.mjs';
-import { Type } from './Type.mjs';
+import * as Native from '../Utils/index.mjs';
+import * as Abstract from './Abstract.mjs';
 
 export const Spreadable = TargetType => {
-	if (!Native.Type.Instance(TargetType, Type)) {
+	if (!Abstract.isType(TargetType)) {
 		Native.Error.Throw.Type('TargetType', 'Type');
 	}
 

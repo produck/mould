@@ -1,11 +1,11 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
-import * as Native from './Native/index.mjs';
+import * as Abstract from './Abstract.mjs';
 
 const DEFAULT_RETURN = new Any.Type();
 
-export class FunctionType extends Native.Type {
+export class FunctionType extends Abstract.Type {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
 			signatures: [{ args: new Tuple.Type(args), ret }],
@@ -27,14 +27,14 @@ export class FunctionType extends Native.Type {
 	}
 
 	_normalize(_function) {
-		const { expression } = Native.Member.get(this);
-
 		if (!Utils.Type.Function(_function)) {
 			new Utils.Error.Cause(_function)
 				.setType('Type')
 				.describe({ expected: 'function' })
 				.throw();
 		}
+
+		const { expression } = this._meta;
 
 		return { [_function.name]: function (..._arguments) {
 			const matchedSignatureList = [];

@@ -1,6 +1,7 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
-import * as Native from './Native/index.mjs';
+import * as Abstract from './Abstract.mjs';
+import * as Decorator from './Decorator.mjs';
 
 function parseElementByType(value, index, _array) {
 	try {
@@ -13,9 +14,9 @@ function parseElementByType(value, index, _array) {
 	}
 }
 
-export class ArrayType extends Native.Type {
+export class ArrayType extends Abstract.Type {
 	element(type) {
-		if (!Native.isSchema(type)) {
+		if (!Abstract.isType(type)) {
 			Utils.Error.Throw.Type('type', 'Type');
 		}
 
@@ -42,6 +43,6 @@ export class ArrayType extends Native.Type {
 	}
 }
 
-Native.Decorator.Spreadable(ArrayType);
+Decorator.Spreadable(ArrayType);
 
 export { ArrayType as Type };

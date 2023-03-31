@@ -1,11 +1,12 @@
-import * as Native from './Native/index.mjs';
+import * as Abstract from './Abstract.mjs';
+import * as Decorator from './Decorator.mjs';
 
-export class AnyType extends Native.Type {
+export class AnyType extends Abstract.Type {
 	_length() {
 		return Infinity;
 	}
 }
 
-Native.Decorator.Spreadable(AnyType);
+Decorator.Spreadable(AnyType);
 
 export { AnyType as Type };
