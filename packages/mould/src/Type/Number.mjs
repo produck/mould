@@ -1,7 +1,7 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Native from './Native/index.mjs';
 
-export class NumberSchema extends Native.Schema {
+export class NumberType extends Native.Type {
 	_normalize(_number) {
 		if (!Utils.Type.Number(_number)) {
 			new Utils.Error.MouldCause(_number)
@@ -12,4 +12,4 @@ export class NumberSchema extends Native.Schema {
 	}
 }
 
-export { NumberSchema as Schema };
+export { NumberType as Type };

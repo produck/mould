@@ -1,7 +1,7 @@
 import * as Native from './Native/index.mjs';
 
-export class AnySchema extends Native.Schema {}
+export class AnyType extends Native.Type {}
 
-Native.Decorator.Spreadable(AnySchema);
+Native.Decorator.Spreadable(AnyType);
 
-export { AnySchema as Schema };
+export { AnyType as Type };

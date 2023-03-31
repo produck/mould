@@ -20,7 +20,8 @@ export {
 	isBigInt as BigInt,
 };
 
-const Instance = (any, constructor) => any instanceof constructor;
+export const Instance = (any, constructor) => any instanceof constructor;
+
 const isNull = any => any === null;
 const isArray = any => Array.isArray(any);
 

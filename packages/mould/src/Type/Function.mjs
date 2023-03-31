@@ -3,12 +3,12 @@ import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
 import * as Native from './Native/index.mjs';
 
-const DEFAULT_RETURN = new Any.Schema();
+const DEFAULT_RETURN = new Any.Type();
 
-export class FunctionSchema extends Native.Schema {
+export class FunctionType extends Native.Type {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
-			signatures: [{ args: new Tuple.Schema(args), ret }],
+			signatures: [{ args: new Tuple.Type(args), ret }],
 		});
 	}
 
@@ -23,10 +23,7 @@ export class FunctionSchema extends Native.Schema {
 	}
 
 	static _expression() {
-		return {
-			...super._expression(),
-			signatures: [],
-		};
+		return { ...super._expression(), signatures: [] };
 	}
 
 	_normalize(_function) {
@@ -65,4 +62,4 @@ export class FunctionSchema extends Native.Schema {
 	}
 }
 
-export { FunctionSchema as Schema };
+export { FunctionType as Type };

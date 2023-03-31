@@ -2,11 +2,13 @@ import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Native from './Native/index.mjs';
 
-export class ArraySchema extends Native.Schema {
-	item(type) {
-		if (!Native.isSchema(type)) {
+export class ArrayType extends Native.Type {
+	contain(itemType) {
+		if (!Native.isSchema(itemType)) {
 			Utils.Error.Throw.Type('type', 'Type');
 		}
+
+		return this.derive({ item: itemType });
 	}
 
 	static _merge(target, _source) {
@@ -20,13 +22,19 @@ export class ArraySchema extends Native.Schema {
 	}
 
 	static _expression() {
-		return {
-			...super._expression(),
-			item: new Any.Schema(),
-		};
+		return { ...super._expression(), item: new Any.Type() };
+	}
+
+	_length() {
+		return Infinity;
+	}
+
+	_normalize() {
+		const { expression } = Native.Member.get(this);
+
 	}
 }
 
-Native.Decorator.Spreadable(ArraySchema);
+Native.Decorator.Spreadable(ArrayType);
 
-export { ArraySchema as Schema };
+export { ArrayType as Type };

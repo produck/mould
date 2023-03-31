@@ -1,14 +1,26 @@
-import { Error } from '../../Utils/index.mjs';
-import { Schema } from './Schema.mjs';
+import * as Native from '../../Utils/index.mjs';
+import { Type } from './Type.mjs';
 
-function* deriveSpreadSchema() {
-	yield this.derive({ spread: true });
-}
-
-export const Spreadable = TargetSchema => {
-	if (TargetSchema instanceof Schema) {
-		TargetSchema.prototype[Symbol.iterator] = deriveSpreadSchema;
+export const Spreadable = TargetType => {
+	if (!Native.Type.Instance(TargetType, Type)) {
+		Native.Error.Throw.Type('TargetType', 'Type');
 	}
 
-	Error.Throw.Type('TargetSchema', 'Type');
+	Object.defineProperties(TargetType.prototype, {
+		[Symbol.iterator]: {
+			value: function* SpreadTypeGenerator() {
+				yield this.derive({ isSpread: true });
+			},
+		},
+		spread: {
+			value: function SpreadType() {
+				return this.derive({ isSpread: true });
+			},
+		},
+		length: {
+			get() {
+				return this._length();
+			},
+		},
+	});
 };

@@ -1,7 +1,7 @@
 import * as Utils from '../../Utils/index.mjs';
 import * as Member from './Member.mjs';
 
-export class Schema {
+export class Type {
 	constructor() {
 		const constructor = new.target;
 
@@ -13,8 +13,8 @@ export class Schema {
 		Object.freeze(this);
 	}
 
-	get spread() {
-		return Member.get(this).spread;
+	get isSpread() {
+		return Member.get(this).isSpread;
 	}
 
 	default(DefaultValue) {
@@ -65,13 +65,11 @@ export class Schema {
 	static _expression() {
 		return {
 			DefaultValue: null,
-			spread: false,
+			isSpread: false,
 		};
 	}
 
 	static _merge(target, _source) {
-		const expression = { ...target, ..._source };
-
-		return expression;
+		return { ...target, ..._source };
 	}
 }
