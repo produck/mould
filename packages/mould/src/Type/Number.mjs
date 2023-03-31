@@ -9,6 +9,8 @@ export class NumberType extends Native.Type {
 				.describe({ expected: 'number' })
 				.throw();
 		}
+
+		return _number;
 	}
 }
 

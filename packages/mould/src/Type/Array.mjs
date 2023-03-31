@@ -2,36 +2,43 @@ import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Native from './Native/index.mjs';
 
+function parseElementByType(value, index, _array) {
+	try {
+		return this.parse(value);
+	} catch (error) {
+		new Utils.Error.Cause(_array)
+			.setType('ArrayIndex')
+			.describe({ index })
+			.throw(error);
+	}
+}
+
 export class ArrayType extends Native.Type {
-	contain(itemType) {
-		if (!Native.isSchema(itemType)) {
+	element(type) {
+		if (!Native.isSchema(type)) {
 			Utils.Error.Throw.Type('type', 'Type');
 		}
 
-		return this.derive({ item: itemType });
-	}
-
-	static _merge(target, _source) {
-		const expression = { ...target };
-
-		if (Object.hasOwn(_source, 'item') && !Native.isSchema(_source.item)) {
-			expression.item = _source.item;
-		}
-
-		return expression;
+		return this.derive({ elementType: type });
 	}
 
 	static _expression() {
-		return { ...super._expression(), item: new Any.Type() };
+		return { ...super._expression(), elementType: new Any.Type() };
 	}
 
 	_length() {
 		return Infinity;
 	}
 
-	_normalize() {
-		const { expression } = Native.Member.get(this);
+	_normalize(_array) {
+		if (!Utils.Type.Array(_array)) {
+			new Utils.Error.Cause(_array)
+				.setType('Type')
+				.describe({ expected: 'array' })
+				.throw();
+		}
 
+		return _array.map(parseElementByType, this._meta.expression.elementType);
 	}
 }
 

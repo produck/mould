@@ -1,9 +1,8 @@
 import * as Utils from '../Utils/index.mjs';
-import * as Any from './Any.mjs';
 import * as Native from './Native/index.mjs';
 
 export class TupleType extends Native.Type {
-	like(typeList) {
+	format(typeList) {
 		if (!Utils.Type.Array(typeList)) {
 			Utils.Error.Throw.Type('typeList', 'array');
 		}
@@ -23,53 +22,38 @@ export class TupleType extends Native.Type {
 		return this.derive({ elements });
 	}
 
-	static _merge(target, _source) {
-		const expression = { ...target };
-
-		if (Utils.Type.Array(_source.elements)) {
-			expression.elements = _source.elements;
-		}
-
-		if (_source.rest instanceof Any.Type) {
-			expression.rest = _source.rest;
-		}
-
-		return expression;
-	}
-
 	static _expression() {
-		return { ...super._expression(), elements: [] };
+		return { ...super._expression(), elementListType: [] };
 	}
 
 	_length() {
-		const { expression } = Native.Member.get(this);
 		let count = 0;
 
-		for (const type of expression.list) {
+		for (const type of this._meta.expression.list) {
 			if (type.isSpread) {
-				if (type.isFinite) {
-					count += type.length;
+				if (isFinite(type.length)) {
+					count = Infinity;
+					break;
 				}
 
-				count = Infinity;
-				break;
+				count += type.length;
+			} else {
+				count += 1;
 			}
-
-			count += 1;
 		}
 
 		return count;
 	}
 
 	_normalize(_tuple) {
-		const { expression } = Native.Member.get(this);
-
 		if (!Utils.Type.Array(_tuple)) {
 			new Utils.Error.Cause(_tuple)
 				.setType('Type')
 				.describe({ expected: 'array' })
 				.throw();
 		}
+
+
 	}
 }
 

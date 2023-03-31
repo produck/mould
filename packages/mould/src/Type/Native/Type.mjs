@@ -1,11 +1,10 @@
 import * as Utils from '../../Utils/index.mjs';
-import * as Member from './Member.mjs';
 
 export class Type {
 	constructor() {
 		const constructor = new.target;
 
-		Member.set(this, {
+		this._meta = Object.freeze({
 			constructor,
 			expression: constructor._expression(),
 		});
@@ -14,7 +13,7 @@ export class Type {
 	}
 
 	get isSpread() {
-		return Member.get(this).isSpread;
+		return this._meta.isSpread;
 	}
 
 	default(DefaultValue) {
@@ -36,8 +35,7 @@ export class Type {
 			Utils.Error.Throw.Type('_empty', 'boolean');
 		}
 
-		const { expression } = Member.get(this);
-		const { DefaultValue } = expression;
+		const { DefaultValue } = this._meta.expression;
 
 		if (_empty) {
 			if (DefaultValue === null) {
@@ -56,17 +54,14 @@ export class Type {
 
 	/** @returns {typeof this} */
 	derive(_expression) {
-		const { expression: target, constructor } = Member.get(this);
+		const { expression: target, constructor } = this._meta;
 		const expression = constructor._merge(target, _expression);
 
 		return new constructor(expression);
 	}
 
 	static _expression() {
-		return {
-			DefaultValue: null,
-			isSpread: false,
-		};
+		return { DefaultValue: null, isSpread: false };
 	}
 
 	static _merge(target, _source) {

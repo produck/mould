@@ -13,10 +13,10 @@ export class FunctionType extends Native.Type {
 	}
 
 	static _merge(target, _source) {
-		const expression = { ...target };
+		const expression = { ...target, _source };
 
 		if (Utils.Type.Array(_source.signatures)) {
-			expression.signatures.push(..._source.signatures);
+			expression.signatures = [...target.signatures, ..._source.signatures];
 		}
 
 		return expression;
