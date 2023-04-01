@@ -1,11 +1,11 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Tuple from './Tuple.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Object from './Object.mjs';
 
 const DEFAULT_RETURN = new Any.Type();
 
-export class FunctionType extends Abstract.Type {
+export class FunctionType extends Object.Type {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
 			signatures: [{ args: new Tuple.Type(args), ret }],
@@ -28,7 +28,7 @@ export class FunctionType extends Abstract.Type {
 
 	_normalize(_function) {
 		if (!Utils.Type.Function(_function)) {
-			new Utils.Error.Cause(_function)
+			new Utils.Cause(_function)
 				.setType('Type')
 				.describe({ expected: 'function' })
 				.throw();

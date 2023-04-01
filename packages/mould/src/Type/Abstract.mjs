@@ -43,7 +43,7 @@ export class AbstractType {
 
 		if (_empty) {
 			if (DefaultValue === null) {
-				new Utils.Error.Cause(_any).setType('Required').throw();
+				new Utils.Cause(_any).setType('Required').throw();
 			} else {
 				return DefaultValue();
 			}
