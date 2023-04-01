@@ -1,21 +1,10 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Any from './Any.mjs';
 import * as Abstract from './Abstract.mjs';
-import * as Object from './Object.mjs';
-import * as Decorator from './Decorator.mjs';
+import { ObjectType } from './Object.mjs';
+import * as Feature from './Feature.mjs';
 
-function parseElementByType(value, index, _array) {
-	try {
-		return this.parse(value);
-	} catch (error) {
-		new Utils.Cause(_array)
-			.setType('ArrayIndex')
-			.describe({ index })
-			.throw(error);
-	}
-}
-
-export class ArrayType extends Object.Type {
+export class ArrayType extends ObjectType {
 	element(type) {
 		if (!Abstract.isType(type)) {
 			Utils.Error.Throw.Type('type', 'Type');
@@ -25,25 +14,36 @@ export class ArrayType extends Object.Type {
 	}
 
 	static _expression() {
-		return { ...super._expression(), elementType: new Any.Type() };
-	}
-
-	_length() {
-		return Infinity;
+		return {
+			...super._expression(),
+			elementType: new Any.Type(),
+		};
 	}
 
 	_normalize(_array) {
+		const cause = new Utils.Cause(_array);
+
 		if (!Utils.Type.Array(_array)) {
-			new Utils.Cause(_array)
-				.setType('Type')
-				.describe({ expected: 'array' })
-				.throw();
+			cause.setType('Type').describe({ expected: 'array' }).throw();
 		}
 
-		return _array.map(parseElementByType, this._meta.expression.elementType);
+		const object = super._normalize(_array);
+		const { elementType } = this._meta.expression;
+		const clone = Array.from(_array);
+		const array = [];
+
+		for (const index in clone) {
+			try {
+				array.push(elementType.parse(clone[index]));
+			} catch (error) {
+				cause.setType('ArrayElement').describe({ index }).throw(error);
+			}
+		}
+
+		Object.assign(array, object);
 	}
 }
 
-Decorator.Spreadable(ArrayType);
+Feature.Spreadable(ArrayType);
 
 export { ArrayType as Type };

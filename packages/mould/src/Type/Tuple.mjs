@@ -1,9 +1,9 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Abstract from './Abstract.mjs';
-import * as Object from './Object.mjs';
-import * as Decorator from './Decorator.mjs';
+import { ObjectType } from './Object.mjs';
+import * as Feature from './Feature.mjs';
 
-export class TupleType extends Object.Type {
+export class TupleType extends ObjectType {
 	elements(typeList) {
 		if (!Utils.Type.Array(typeList)) {
 			Utils.Error.Throw.Type('typeList', 'array');
@@ -52,49 +52,51 @@ export class TupleType extends Object.Type {
 	}
 
 	_normalize(_tuple) {
+		const cause = new Utils.Cause(_tuple);
+
 		if (!Utils.Type.Array(_tuple)) {
-			new Utils.Cause(_tuple)
-				.setType('Type')
-				.describe({ expected: 'array' })
-				.throw();
+			cause.setType('Type').describe({ expected: 'array' }).throw();
 		}
 
 		const { min, length } = this._meta.expression;
 
 		if (_tuple.length < min) {
-			new Utils.Cause(_tuple)
-				.setType('TupleMin')
-				.describe({ min })
-				.throw();
+			cause.setType('TupleMin').describe({ min }).throw();
 		}
 
 		if (_tuple.length > length) {
-			new Utils.Cause(_tuple)
-				.setType('TupleLength')
-				.describe({ length })
-				.throw();
+			cause.setType('TupleLength').describe({ length }).throw();
 		}
 
-		const clone = [..._tuple];
+		const object = super._normalize(_tuple);
+		const clone = _tuple.slice(0);
+		const restNumber = _tuple.length - min;
 		const tuple = [];
+		let index = 0;
 
 		for (const type of this._meta.expression.elementTypeList) {
-			if (type.isSpread) {
-				const length = isFinite(type.length) ? _tuple.length - min : type.length;
-				const valueList = type.parse(clone.splice(0, length));
+			try {
+				if (type.isSpread) {
+					const length = isFinite(type.length) ? restNumber : type.length;
+					const clone = type.parse(clone.splice(0, length));
 
-				tuple.push(...valueList);
-			} else {
-				const value = type.parse(clone.shift());
+					tuple.push(...clone);
+					index += length;
+				} else {
+					const value = type.parse(clone.shift());
 
-				tuple.push(value);
+					tuple.push(value);
+					index += 1;
+				}
+			} catch (error) {
+				cause.setType('TupleElement').describe({ index }).throw(error);
 			}
 		}
 
-		return tuple;
+		return Reflect.assign(tuple, object);
 	}
 }
 
-Decorator.Spreadable(TupleType);
+Feature.Spreadable(TupleType);
 
 export { TupleType as Type };

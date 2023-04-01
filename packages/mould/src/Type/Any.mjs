@@ -1,5 +1,5 @@
 import * as Abstract from './Abstract.mjs';
-import * as Decorator from './Decorator.mjs';
+import * as Feature from './Feature.mjs';
 
 export class AnyType extends Abstract.Type {
 	_length() {
@@ -7,6 +7,6 @@ export class AnyType extends Abstract.Type {
 	}
 }
 
-Decorator.Spreadable(AnyType);
+Feature.Spreadable(AnyType);
 
 export { AnyType as Type };

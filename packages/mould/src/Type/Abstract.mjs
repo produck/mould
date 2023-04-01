@@ -6,7 +6,7 @@ export class AbstractType {
 
 		this._meta = Object.freeze({
 			constructor,
-			expression: constructor._expression(),
+			expression: Object.freeze(constructor._expression()),
 		});
 
 		Object.freeze(this);
@@ -28,6 +28,14 @@ export class AbstractType {
 		}
 
 		return this.derive({ DefaultValue });
+	}
+
+	optional() {
+		return this.default(() => undefined);
+	}
+
+	required() {
+		return this.derive({ DefaultValue: null });
 	}
 
 	parse(_any, _empty = false, _deepth = 0) {
@@ -65,7 +73,11 @@ export class AbstractType {
 	}
 
 	static _expression() {
-		return { DefaultValue: null, isSpread: false, runtime: false };
+		return {
+			DefaultValue: null,
+			isSpread: false,
+			runtime: false,
+		};
 	}
 
 	static _merge(target, _source) {
