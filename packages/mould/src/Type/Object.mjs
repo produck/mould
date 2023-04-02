@@ -1,6 +1,16 @@
 import * as Utils from '../Utils/index.mjs';
 import * as Abstract from './Abstract.mjs';
 
+import * as Number from './Number.mjs';
+import * as String from './String.mjs';
+import * as Symbol from './Symbol.mjs';
+
+const INDEX_TYPE = [Number.Type, String.Type, Symbol.Type];
+
+const isKeyType = _type => {
+	return INDEX_TYPE.some(Type => Utils.Type.Instance(_type, Type));
+};
+
 export class ObjectType extends Abstract.Type {
 	properties(_keyTypeMap) {
 		if (!Utils.Type.PlainObjectLike(_keyTypeMap)) {
@@ -22,7 +32,23 @@ export class ObjectType extends Abstract.Type {
 		return this.derive({ properties: keyTypeMap });
 	}
 
-	typeofKey(key) {
+	index(keyType, valueType) {
+		if (!Abstract.isType(keyType)) {
+			Utils.Error.Throw.Type('keyType', 'Type');
+		}
+
+		if (!Abstract.isType(valueType)) {
+			Utils.Error.Throw.Type('valueType', 'Type');
+		}
+
+		if (!isKeyType(keyType)) {
+			Utils.Error.Throw.Type('keyType', 'number, string or symbol');
+		}
+
+
+	}
+
+	at(key) {
 		if (!Utils.Type.String(key) && !Utils.Type.Symbol(key)) {
 			Utils.Error.Throw.Type('key', 'string or symbol');
 		}
@@ -66,9 +92,22 @@ export class ObjectType extends Abstract.Type {
 
 		const { properties } = this._meta.expression;
 		const object = {};
+		const clone = { ..._object };
 
 		for (const key in properties) {
+			const type = properties[key];
 
+			try {
+				const _value = _object[key];
+				const empty = !Object.hasOwn(_object, key) && _value === undefined;
+
+				object[key] = type.parse(_value, empty);
+				delete clone[key];
+			} catch (error) {
+				cause.setType('ObjectProperty').describe({
+					key, explicit: true,
+				}).throw(error);
+			}
 		}
 	}
 }

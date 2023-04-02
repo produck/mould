@@ -11,7 +11,7 @@ const isBigInt = any => TypeOf(any, 'bigint');
 
 export {
 	isUndefined as Undefined,
-	isNumber as Number,
+	isNumber as String,
 	isString as String,
 	isBoolean as Boolean,
 	isFunction as Function,
