@@ -12,6 +12,14 @@ export class FunctionType extends Object.Type {
 		});
 	}
 
+	parameters() {
+
+	}
+
+	returns() {
+
+	}
+
 	static _merge(target, _source) {
 		const expression = { ...target, _source };
 

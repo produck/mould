@@ -5,10 +5,27 @@ import * as Number from './Number.mjs';
 import * as String from './String.mjs';
 import * as Symbol from './Symbol.mjs';
 
-const INDEX_TYPE = [Number.Type, String.Type, Symbol.Type];
+const KEY_OF = object => [
+	...Object.getOwnPropertyNames(object),
+	...Object.getOwnPropertySymbols(object),
+];
+
+const INDEX_LIST = [
+	{ name: 'number', Type: Number.Type },
+	{ name: 'string', Type: String.Type },
+	{ name: 'symbol', Type: Symbol.Type },
+];
+
+function IS_TYPE(meta) {
+	return Utils.Type.Instance(this, meta.Type);
+}
 
 const isKeyType = _type => {
-	return INDEX_TYPE.some(Type => Utils.Type.Instance(_type, Type));
+	return INDEX_LIST.some(IS_TYPE, _type);
+};
+
+const nameOfKeyType = _type => {
+	return INDEX_LIST.find(IS_TYPE, _type).name;
 };
 
 export class ObjectType extends Abstract.Type {
@@ -17,19 +34,19 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw.Type('keyTypeMap', 'plain object');
 		}
 
-		const keyTypeMap = {};
+		const properties = {}, keys = KEY_OF(_keyTypeMap);
 
-		for (const key in _keyTypeMap) {
+		for (const key of keys) {
 			const type = _keyTypeMap[key];
 
 			if (!Abstract.isType(type)) {
 				Utils.Error.Throw.Type(`keyTypeMap['${key}']`, 'Type');
 			}
 
-			keyTypeMap[key] = type;
+			properties[key] = type;
 		}
 
-		return this.derive({ properties: keyTypeMap });
+		return this.derive({ properties });
 	}
 
 	index(keyType, valueType) {
@@ -45,7 +62,17 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw.Type('keyType', 'number, string or symbol');
 		}
 
+		const name = nameOfKeyType(keyType);
 
+		return this.derive({ index: { [name]: [valueType] } });
+	}
+
+	by(constructor) {
+		if (!Utils.Type.Function(constructor)) {
+			Utils.Error.Throw.Type('constructor', 'function');
+		}
+
+		return this.derive({ constructor });
 	}
 
 	at(key) {
@@ -53,33 +80,66 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw.Type('key', 'string or symbol');
 		}
 
-		return this._meta.expression.properties[key];
+		const { properties } = this._meta.expression;
+
+		if (!Object.hasOwn(properties, key)) {
+			Utils.Error.Throw(`There is not 1 own key(${key}).`);
+		}
+
+		return properties[key];
 	}
 
-	pick(keyList) {
-
-	}
-
-	omit(keyList) {
-
-	}
-
-	partial() {
-
-	}
-
-	required() {
+	pick(keys) {
 
 	}
 
-	keyof() {
+	omit(keys) {
 
+	}
+
+	need(keys) {
+		const { properties } = this._meta.expression;
+		const target = {};
+
+		for (const key of KEY_OF(properties)) {
+			const type = properties[key];
+			const expection = keys[key];
+
+			if (expection === true) {
+				target[key] = type.required();
+			}
+
+			if (expection === false) {
+				target[key] = type.default();
+			}
+
+			if (Utils.Type.Function(expection)) {
+				target[key] = type.default(expection);
+			}
+		}
+
+		this.derive({ properties: target });
+	}
+
+	keys() {
+		return [...this._meta.expression.keys];
+	}
+
+	default(DefaultValue = () => new Object()) {
+		return super.default(DefaultValue);
 	}
 
 	static _expression() {
 		return {
 			...super._expression(),
 			properties: {},
+			keys: [],
+			constructor: Object,
+			index: {
+				string: [],
+				number: [],
+				symbol: [],
+			},
 		};
 	}
 
@@ -90,11 +150,12 @@ export class ObjectType extends Abstract.Type {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
 		}
 
-		const { properties } = this._meta.expression;
-		const object = {};
-		const clone = { ..._object };
+		const { properties, keys, DefaultValue } = this._meta.expression;
+		const object = DefaultValue(), temp = { ..._object };
 
-		for (const key in properties) {
+		let indexed = false;
+
+		for (const key of keys) {
 			const type = properties[key];
 
 			try {
@@ -102,13 +163,21 @@ export class ObjectType extends Abstract.Type {
 				const empty = !Object.hasOwn(_object, key) && _value === undefined;
 
 				object[key] = type.parse(_value, empty);
-				delete clone[key];
+				delete temp[key];
 			} catch (error) {
-				cause.setType('ObjectProperty').describe({
-					key, explicit: true,
-				}).throw(error);
+				cause.setType('ObjectProperty').describe({ key, indexed }).throw(error);
 			}
 		}
+
+		indexed = true;
+
+		for (const key of KEY_OF(temp)) {
+
+		}
+
+		Reflect.setPrototypeOf(object, Reflect.getPrototypeOf(_object));
+
+		return Object.seal(object);
 	}
 }
 

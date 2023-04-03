@@ -3,8 +3,5 @@
 		"allowJs": true,
 		"noEmit": true,
 		"target": "ESNext",
-		"lib": [
-			"ES2022"
-		]
 	}
 }
