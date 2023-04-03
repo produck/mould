@@ -1,19 +1,17 @@
 import * as Utils from '../Utils/index.mjs';
 
 export class AbstractType {
-	constructor() {
-		const constructor = new.target;
-
+	constructor(expression = new.target._expression()) {
 		this._meta = Object.freeze({
-			constructor,
-			expression: Object.freeze(constructor._expression()),
+			constructor: new.target,
+			expression: Object.freeze(expression),
 		});
 
 		Object.freeze(this);
 	}
 
 	get isSpread() {
-		return this._meta.isSpread;
+		return this._meta.expression.isSpread;
 	}
 
 	default(DefaultValue) {
@@ -24,7 +22,7 @@ export class AbstractType {
 		try {
 			this.parse(DefaultValue());
 		} catch {
-			Utils.Error.Throw('The returns from DefaultValue() is NOT satisfied.');
+			Utils.Error.Throw('The value of DefaultValue() is NOT satisfied.');
 		}
 
 		return this.derive({ DefaultValue });
@@ -66,10 +64,10 @@ export class AbstractType {
 
 	/** @returns {typeof this} */
 	derive(_expression) {
-		const { expression: target, constructor } = this._meta;
-		const expression = constructor._merge(target, _expression);
-
-		return new constructor(expression);
+		return new this._meta.constructor({
+			...this._meta.expression,
+			..._expression,
+		});
 	}
 
 	static _expression() {
@@ -80,10 +78,7 @@ export class AbstractType {
 		};
 	}
 
-	static _merge(target, _source) {
-		return { ...target, ..._source };
+	static isType(any) {
+		return Utils.Type.Instance(any, this);
 	}
 }
-
-export const isType = any => Utils.Type.Instance(any, AbstractType);
-export { AbstractType as Type };

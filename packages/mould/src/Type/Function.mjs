@@ -20,16 +20,6 @@ export class FunctionType extends Object.Type {
 
 	}
 
-	static _merge(target, _source) {
-		const expression = { ...target, _source };
-
-		if (Utils.Type.Array(_source.signatures)) {
-			expression.signatures = [...target.signatures, ..._source.signatures];
-		}
-
-		return expression;
-	}
-
 	static _expression() {
 		return { ...super._expression(), signatures: [] };
 	}
