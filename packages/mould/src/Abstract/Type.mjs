@@ -10,8 +10,8 @@ export class AbstractType {
 		Object.freeze(this);
 	}
 
-	get isSpread() {
-		return this._meta.expression.isSpread;
+	get isRequired() {
+		return Utils.Type.Null(this._meta.expression.DefaultValue);
 	}
 
 	default(DefaultValue) {
@@ -36,13 +36,13 @@ export class AbstractType {
 		return this.derive({ DefaultValue: null });
 	}
 
-	parse(_any, _empty = false, _deepth = 0) {
-		if (_deepth > 1000) {
-			Utils.Error.Throw('Parsing too deep.', RangeError);
-		}
-
+	parse(_any, _empty = false, _depth = 0) {
 		if (!Utils.Type.Boolean(_empty)) {
 			Utils.Error.Throw.Type('_empty', 'boolean');
+		}
+
+		if (_depth > 1000) {
+			Utils.Error.Throw('Parsing too deep.', RangeError);
 		}
 
 		const { DefaultValue } = this._meta.expression;
@@ -55,7 +55,7 @@ export class AbstractType {
 			}
 		}
 
-		return this._normalize(_any);
+		return this._normalize(_any, _depth);
 	}
 
 	_normalize(_any) {
@@ -73,7 +73,6 @@ export class AbstractType {
 	static _expression() {
 		return {
 			DefaultValue: null,
-			isSpread: false,
 			runtime: false,
 		};
 	}

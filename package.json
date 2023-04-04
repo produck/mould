@@ -3,7 +3,9 @@
 	"private": true,
 	"main": "index.js",
 	"scripts": {
-		"test": "lerna run test --stream --no-prefix"
+		"test": "lerna run test --stream --no-prefix",
+		"coverage": "c8 --exclude=**/*.spec.mjs --reporter=lcov npm run test",
+		"publish": "npm run lint && npm test && lerna publish --no-private"
 	},
 	"license": "MIT",
 	"workspaces": [

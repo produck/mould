@@ -143,8 +143,9 @@ export class ObjectType extends Abstract.Type {
 		};
 	}
 
-	_normalize(_object) {
+	_normalize(_object, _depth) {
 		const cause = new Utils.Cause(_object);
+		const depth = _depth + 1;
 
 		if (!Utils.Type.Object(_object)) {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
@@ -162,7 +163,7 @@ export class ObjectType extends Abstract.Type {
 				const _value = _object[key];
 				const empty = !Object.hasOwn(_object, key) && _value === undefined;
 
-				object[key] = type.parse(_value, empty);
+				object[key] = type.parse(_value, empty, depth);
 				delete temp[key];
 			} catch (error) {
 				cause.setType('ObjectProperty').describe({ key, indexed }).throw(error);
