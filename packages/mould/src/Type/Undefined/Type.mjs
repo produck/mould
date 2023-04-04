@@ -1,5 +1,5 @@
-import * as Utils from '../Utils/index.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Utils from '../../Utils/index.mjs';
+import * as Abstract from '../Abstract/index.mjs';
 
 export class UndefinedType extends Abstract.Type {
 	_normalize(_undefined) {
@@ -13,5 +13,3 @@ export class UndefinedType extends Abstract.Type {
 		return _undefined;
 	}
 }
-
-export { UndefinedType as Type };

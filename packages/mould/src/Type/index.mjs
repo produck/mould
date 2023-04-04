@@ -2,7 +2,7 @@ export { Type as Never } from './Never/index.mjs';
 
 export { Type as Any } from './Any/index.mjs';
 
-export { Type as Undefined } from './Undefined.mjs';
+export { Type as Undefined } from './Undefined/index.mjs';
 export { Type as Null } from './Null.mjs';
 
 export { Type as Boolean } from './Boolean/index.mjs';
