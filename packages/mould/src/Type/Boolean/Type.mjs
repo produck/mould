@@ -1,5 +1,5 @@
-import * as Utils from '../Utils/index.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Utils from '../../Utils/index.mjs';
+import * as Abstract from '../Abstract/index.mjs';
 
 export class BooleanType extends Abstract.Type {
 	_normalize(_boolean) {
@@ -13,5 +13,3 @@ export class BooleanType extends Abstract.Type {
 		return _boolean;
 	}
 }
-
-export { BooleanType as Type };

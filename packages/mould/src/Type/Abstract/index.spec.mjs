@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 
 import * as Abstract from './index.mjs';
-import * as Utils from '../Utils/index.mjs';
+import * as Utils from '../../Utils/index.mjs';
 
 describe('Type::Abstract', function () {
 	describe('new()', function () {
@@ -34,16 +34,16 @@ describe('Type::Abstract', function () {
 			assert.notEqual(origin, target);
 		});
 
-		it('should throw if bad DefaultValue.', function () {
+		it('should throw if bad fallback.', function () {
 			const abstract = new Abstract.Type();
 
 			assert.throws(() => abstract.default(null), {
 				name: 'TypeError',
-				message: 'Invalid "DefaultValue", one "function" expected.',
+				message: 'Invalid "fallback", one "function" expected.',
 			});
 		});
 
-		it('should throw if bad DefaultValue().', function () {
+		it('should throw if bad fallback().', function () {
 			const abstract = new class extends Abstract.Type {
 				_normalize() {
 					throw new Error('Foo');
@@ -52,7 +52,7 @@ describe('Type::Abstract', function () {
 
 			assert.throws(() => abstract.default(() => null), {
 				name: 'Error',
-				message: 'The value of DefaultValue() is NOT satisfied.',
+				message: 'The value of fallback() is NOT satisfied.',
 			});
 		});
 	});
@@ -63,7 +63,7 @@ describe('Type::Abstract', function () {
 			const target = origin.optional();
 
 			assert.notEqual(origin, target);
-			assert.equal(target._meta.expression.DefaultValue(), undefined);
+			assert.equal(target._meta.expression.fallback(), undefined);
 		});
 	});
 
@@ -73,7 +73,7 @@ describe('Type::Abstract', function () {
 			const target = origin.required();
 
 			assert.notEqual(origin, target);
-			assert.equal(target._meta.expression.DefaultValue, null);
+			assert.equal(target._meta.expression.fallback, null);
 		});
 	});
 

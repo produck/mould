@@ -1,10 +1,8 @@
-import * as assert from 'node:assert/strict';
 import { describe } from 'mocha';
-
-import { AnyType } from './Type.mjs';
+import * as Any from './index.mjs';
 
 describe('Type::Any', function () {
 	it('should create a Any.', function () {
-		new AnyType();
+		new Any.Type();
 	});
 });

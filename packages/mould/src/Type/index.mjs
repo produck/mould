@@ -1,11 +1,11 @@
-export { Type as Never } from './Never.mjs';
+export { Type as Never } from './Never/index.mjs';
 
-export { Type as Any } from './Any.mjs';
+export { Type as Any } from './Any/index.mjs';
 
 export { Type as Undefined } from './Undefined.mjs';
 export { Type as Null } from './Null.mjs';
 
-export { Type as Boolean } from './Boolean.mjs';
+export { Type as Boolean } from './Boolean/index.mjs';
 export { Type as Number } from './Number.mjs';
 export { Type as String } from './String.mjs';
 export { Type as Symbol } from './Symbol.mjs';

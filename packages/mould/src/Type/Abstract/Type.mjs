@@ -1,4 +1,4 @@
-import * as Utils from '../Utils/index.mjs';
+import * as Utils from '../../Utils/index.mjs';
 import { Mould } from './Mould.mjs';
 
 export class AbstractType extends Mould {
@@ -14,21 +14,21 @@ export class AbstractType extends Mould {
 	}
 
 	get isRequired() {
-		return Utils.Type.Null(this._meta.expression.DefaultValue);
+		return Utils.Type.Null(this._meta.expression.fallback);
 	}
 
-	default(DefaultValue) {
-		if (!Utils.Type.Function(DefaultValue)) {
-			Utils.Error.Throw.Type('DefaultValue', 'function');
+	default(fallback) {
+		if (!Utils.Type.Function(fallback)) {
+			Utils.Error.Throw.Type('fallback', 'function');
 		}
 
 		try {
-			this.parse(DefaultValue());
+			this.parse(fallback());
 		} catch {
-			Utils.Error.Throw('The value of DefaultValue() is NOT satisfied.');
+			Utils.Error.Throw('The value of fallback() is NOT satisfied.');
 		}
 
-		return this.derive({ DefaultValue });
+		return this.derive({ fallback });
 	}
 
 	optional() {
@@ -36,7 +36,7 @@ export class AbstractType extends Mould {
 	}
 
 	required() {
-		return this.derive({ DefaultValue: null });
+		return this.derive({ fallback: null });
 	}
 
 	parse(_any, _empty = false, _depth = 0) {
@@ -48,14 +48,14 @@ export class AbstractType extends Mould {
 			Utils.Error.Throw('Parsing too deep.', RangeError);
 		}
 
-		const { DefaultValue } = this._meta.expression;
+		const { fallback } = this._meta.expression;
 
 		if (_empty) {
-			if (DefaultValue === null) {
+			if (fallback === null) {
 				new Utils.Cause(_any).setType('Required').throw();
-			} else {
-				return DefaultValue();
 			}
+
+			return fallback();
 		}
 
 		return this._normalize(_any, _depth);
@@ -75,8 +75,7 @@ export class AbstractType extends Mould {
 
 	static _expression() {
 		return {
-			DefaultValue: null,
-			runtime: false,
+			fallback: null,
 		};
 	}
 
