@@ -1,7 +1,10 @@
 import * as Utils from '../Utils/index.mjs';
+import { Mould } from './Mould.mjs';
 
-export class AbstractType {
+export class AbstractType extends Mould {
 	constructor(expression = new.target._expression()) {
+		super();
+
 		this._meta = Object.freeze({
 			constructor: new.target,
 			expression: Object.freeze(expression),

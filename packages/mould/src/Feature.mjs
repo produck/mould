@@ -1,5 +1,10 @@
 export function Spreadable(TargetType) {
 	Object.defineProperties(TargetType.prototype, {
+		isSpread: {
+			get() {
+				return this._meta.expression.isSpread;
+			},
+		},
 		[Symbol.iterator]: {
 			value: function* SpreadGenerator() {
 				yield this.derive({ isSpread: true });
@@ -16,4 +21,14 @@ export function Spreadable(TargetType) {
 			},
 		},
 	});
+
+	const __expression = TargetType._expression;
+
+	TargetType._expression = function SpreadableExpression() {
+		return {
+			...__expression(),
+			isSpread: false,
+			length: Infinity,
+		};
+	};
 }
