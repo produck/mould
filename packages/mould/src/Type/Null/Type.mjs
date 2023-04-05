@@ -1,5 +1,6 @@
-import * as Utils from '../Utils/index.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Utils from '../../Utils/index.mjs';
+import * as Abstract from '../Abstract/index.mjs';
+import * as Feature from '../Feature.mjs';
 
 export class NullType extends Abstract.Type {
 	_normalize(_null) {
@@ -14,4 +15,5 @@ export class NullType extends Abstract.Type {
 	}
 }
 
-export { NullType as Type };
+Feature.Primitive(NullType);
+Feature.Empty(NullType);

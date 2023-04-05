@@ -1,5 +1,6 @@
 import * as Utils from '../../Utils/index.mjs';
 import * as Abstract from '../Abstract/index.mjs';
+import * as Feature from '../Feature.mjs';
 
 export class BooleanType extends Abstract.Type {
 	_normalize(_boolean) {
@@ -13,3 +14,5 @@ export class BooleanType extends Abstract.Type {
 		return _boolean;
 	}
 }
+
+Feature.Primitive(BooleanType);

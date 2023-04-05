@@ -32,3 +32,11 @@ export function Spreadable(TargetType) {
 		};
 	};
 }
+
+export function Primitive(TargetType) {
+	Object.defineProperty(TargetType, 'isPrimitive', { get: () => true });
+}
+
+export function Empty(TargetType) {
+	Object.defineProperty(TargetType, 'isEmpty', { get: () => true });
+}
