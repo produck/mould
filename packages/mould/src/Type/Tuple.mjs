@@ -1,4 +1,4 @@
-import * as Utils from '../Utils/index.mjs';
+import * as Utils from '#Utils';
 import * as Abstract from './Abstract.mjs';
 import { ObjectType } from './Object.mjs';
 import * as Feature from './Feature.mjs';

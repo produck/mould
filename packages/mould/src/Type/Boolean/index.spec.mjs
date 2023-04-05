@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe } from 'mocha';
 
 import * as Boolean from './index.mjs';
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 
 describe('Type::Boolean', function () {
 	const type = new Boolean.Type();

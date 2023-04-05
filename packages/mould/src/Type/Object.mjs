@@ -1,4 +1,4 @@
-import * as Utils from '../Utils/index.mjs';
+import * as Utils from '#Utils';
 import * as Abstract from './Abstract.mjs';
 
 import * as Number from './Number.mjs';
@@ -29,7 +29,7 @@ const nameOfKeyType = _type => {
 };
 
 export class ObjectType extends Abstract.Type {
-	properties(_keyTypeMap) {
+	own(_keyTypeMap) {
 		if (!Utils.Type.PlainObjectLike(_keyTypeMap)) {
 			Utils.Error.Throw.Type('keyTypeMap', 'plain object');
 		}

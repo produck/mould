@@ -1,4 +1,4 @@
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 
 const UNDEFINED = Symbol.for('Mold::Undefined');
 const CATCHER = cause => console.log(cause);

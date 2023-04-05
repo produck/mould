@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe } from 'mocha';
 
 import * as Number from './index.mjs';
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 
 describe('Type::Number', function () {
 	const type = new Number.Type();

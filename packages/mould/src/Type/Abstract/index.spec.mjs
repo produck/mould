@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 
 import * as Abstract from './index.mjs';
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 
 describe('Type::Abstract', function () {
 	describe('new()', function () {

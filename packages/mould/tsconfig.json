@@ -3,5 +3,11 @@
 		"allowJs": true,
 		"noEmit": true,
 		"target": "ESNext",
-	}
+		"baseUrl": "./",
+		"paths": {
+			"#Utils": [
+				"src/Utils/index.mjs"
+			]
+		}
+	},
 }

@@ -1,4 +1,4 @@
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 import { Mould } from './Mould.mjs';
 
 export class AbstractType extends Mould {

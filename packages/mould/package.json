@@ -3,6 +3,9 @@
 	"version": "0.0.0",
 	"description": "A new dynamic type system for ECMAScript.",
 	"main": "index.js",
+	"imports": {
+		"#Utils": "./src/Utils/index.mjs"
+	},
 	"scripts": {
 		"test": "mocha \"**/*.spec.mjs\" --no-diff -t 999999999 --exit"
 	},

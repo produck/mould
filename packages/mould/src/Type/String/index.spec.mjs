@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe } from 'mocha';
 
 import * as String from './index.mjs';
-import * as Utils from '../../Utils/index.mjs';
+import * as Utils from '#Utils';
 
 describe('Type::String', function () {
 	const type = new String.Type();
