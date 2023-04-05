@@ -1,5 +1,6 @@
-import * as Utils from '../Utils/index.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Utils from '../../Utils/index.mjs';
+import * as Abstract from '../Abstract/index.mjs';
+import * as Feature from '../Feature.mjs';
 
 export class NumberType extends Abstract.Type {
 	_normalize(_number) {
@@ -14,4 +15,4 @@ export class NumberType extends Abstract.Type {
 	}
 }
 
-export { NumberType as Type };
+Feature.Primitive(NumberType);
