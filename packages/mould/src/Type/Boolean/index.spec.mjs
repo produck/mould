@@ -5,18 +5,24 @@ import * as Boolean from './index.mjs';
 import * as Utils from '../../Utils/index.mjs';
 
 describe('Type::Boolean', function () {
-	const boolean = new Boolean.Type();
+	const type = new Boolean.Type();
 
 	describe('._normalize()', function () {
 		it('should pass.', function () {
-			assert.equal(boolean.parse(false), false);
-			assert.equal(boolean.parse(true), true);
+			assert.equal(type.parse(false), false);
+			assert.equal(type.parse(true), true);
 		});
 
 		it('should throw forever.', function () {
-			assert.throws(() => boolean.parse('foo'), cause => {
+			assert.throws(() => type.parse('foo'), cause => {
 				return Utils.Type.Instance(cause, Utils.Cause);
 			});
+		});
+	});
+
+	describe('.isPrimitive()', function () {
+		it('should be true.', function () {
+			assert.ok(type.isPrimitive);
 		});
 	});
 });

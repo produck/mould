@@ -33,10 +33,12 @@ export function Spreadable(TargetType) {
 	};
 }
 
+const FLAG_TRUE = () => true;
+
 export function Primitive(TargetType) {
-	Object.defineProperty(TargetType, 'isPrimitive', { get: () => true });
+	Object.defineProperty(TargetType.prototype, 'isPrimitive', { get: FLAG_TRUE });
 }
 
 export function Empty(TargetType) {
-	Object.defineProperty(TargetType, 'isEmpty', { get: () => true });
+	Object.defineProperty(TargetType.prototype, 'isEmpty', { get: FLAG_TRUE });
 }

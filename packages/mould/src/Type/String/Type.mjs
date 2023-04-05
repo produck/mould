@@ -1,5 +1,6 @@
-import * as Utils from '../Utils/index.mjs';
-import * as Abstract from './Abstract.mjs';
+import * as Utils from '../../Utils/index.mjs';
+import * as Abstract from '../Abstract/index.mjs';
+import * as Feature from '../Feature.mjs';
 
 export class StringType extends Abstract.Type {
 	_normalize(_string) {
@@ -14,4 +15,4 @@ export class StringType extends Abstract.Type {
 	}
 }
 
-export { StringType as Type };
+Feature.Primitive(StringType);
