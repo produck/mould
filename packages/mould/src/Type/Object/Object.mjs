@@ -28,7 +28,7 @@ export class ObjectType extends Abstract.Type {
 			properties[key] = type;
 		}
 
-		return this.derive({ properties });
+		return this.derive({ properties, keys });
 	}
 
 	index(keyType, valueType) {
@@ -81,13 +81,17 @@ export class ObjectType extends Abstract.Type {
 	#project(keys, target, mutate) {
 		const { properties } = this._expression;
 
-		for (const key of Key.getOwnNamesAndSymbols(keys)) {
-			if (!Object.hasOwn(properties, key)) {
-				Utils.Error.Throw(`The key "${key}" is NOT defined.`);
-			}
+		if (!Utils.Type.PlainObjectLike(keys)) {
+			Utils.Error.Throw.Type('keys', 'plain object');
+		}
 
+		for (const key of Key.getOwnNamesAndSymbols(keys)) {
 			if (keys[key] !== true) {
 				Utils.Error.Throw.Type(`keys[${key}]`, 'true');
+			}
+
+			if (!Object.hasOwn(properties, key)) {
+				Utils.Error.Throw(`The key "${key}" is NOT defined.`);
 			}
 
 			mutate(target, key, properties[key]);
@@ -101,33 +105,30 @@ export class ObjectType extends Abstract.Type {
 	}
 
 	omit(keys) {
-		return this.#project(keys, {
-			...this._expression.properties,
-		}, DELETE_KEY);
+		return this.#project(keys, { ...this._expression.properties }, DELETE_KEY);
 	}
 
 	require(keys) {
-		const { properties } = this._expression;
-		const target = {}, temp = { ...keys };
+		const properties = {}, temp = { ...keys };
 
-		for (const key of Key.getOwnNamesAndSymbols(properties)) {
-			const type = properties[key];
+		for (const key of Key.getOwnNamesAndSymbols(this._expression.properties)) {
+			const type = this._expression.properties[key];
 			const expection = keys[key];
 
 			if (!Object.hasOwn(keys, key)) {
-				target[key] = type;
+				properties[key] = type;
 			}
 
 			if (expection === true) {
-				target[key] = type.required();
+				properties[key] = type.required();
 			}
 
 			if (expection === false) {
-				target[key] = type.optional();
+				properties[key] = type.optional();
 			}
 
 			if (Utils.Type.Function(expection)) {
-				target[key] = type.default(expection);
+				properties[key] = type.default(expection);
 			}
 
 			if (Object.hasOwn(key)) {
@@ -143,7 +144,7 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw(`Undefined keys: ${keyList.join(', ')}`);
 		}
 
-		this.derive({ properties: target });
+		return this.derive({ properties });
 	}
 
 	keys() {
