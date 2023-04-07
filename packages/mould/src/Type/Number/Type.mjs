@@ -16,3 +16,4 @@ export class NumberType extends Abstract.Type {
 }
 
 Feature.Primitive(NumberType);
+Feature.Key(NumberType);

@@ -6,10 +6,14 @@ import * as Key from './Key.mjs';
 const APPEND_KEY = (target, key, type) => target[key] = type;
 const DELETE_KEY = (target, key) => delete target[key];
 
+function isSignatureKeyType(signature) {
+	return signature.key.isValid(this);
+}
+
 export class ObjectType extends Abstract.Type {
 	field(_properties) {
 		if (!Utils.Type.PlainObjectLike(_properties)) {
-			Utils.Error.Throw.Type('keyTypeMap', 'plain object');
+			Utils.Error.Throw.Type('properties', 'plain object');
 		}
 
 		const properties = {}, keys = Key.getOwnNamesAndSymbols(_properties);
@@ -18,7 +22,7 @@ export class ObjectType extends Abstract.Type {
 			const type = _properties[key];
 
 			if (!Abstract.Type.isType(type)) {
-				Utils.Error.Throw.Type(`keyTypeMap['${key}']`, 'Type');
+				Utils.Error.Throw.Type(`properties["${key}"]`, 'Type');
 			}
 
 			properties[key] = type;
@@ -36,19 +40,20 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw.Type('valueType', 'Type');
 		}
 
-		if (!Key.isKeyType(keyType)) {
+		if (!keyType.isKey) {
 			Utils.Error.Throw.Type('keyType', 'number, string or symbol');
 		}
 
 		return this.derive({
-			index: {
-				[Key.getKeyTypeName(keyType)]: [valueType],
-			},
+			index: [
+				...this._meta.expression.index,
+				{ key: keyType, value: valueType },
+			],
 		});
 	}
 
-	explicit() {
-		return this.derive({ index: { string: [], number: [], symbol: [] } });
+	exact() {
+		return this.derive({ index: [] });
 	}
 
 	by(constructor) {
@@ -145,21 +150,13 @@ export class ObjectType extends Abstract.Type {
 		return [...this._meta.expression.keys];
 	}
 
-	default(fallback = () => new Object()) {
-		return super.default(fallback);
-	}
-
 	static _expression() {
 		return {
 			...super._expression(),
 			properties: {},
+			index: [],
 			keys: [],
 			constructor: Object,
-			index: {
-				string: [],
-				number: [],
-				symbol: [],
-			},
 		};
 	}
 
@@ -173,7 +170,7 @@ export class ObjectType extends Abstract.Type {
 		const { expression } = this._meta;
 		const { constructor } = expression;
 
-		if (!Utils.Type.Instance(_object, constructor)) {
+		if (_object.constructor !== constructor) {
 			cause.setType('Constructor').describe({ constructor }).throw();
 		}
 
@@ -189,8 +186,10 @@ export class ObjectType extends Abstract.Type {
 				const _value = _object[key];
 				const empty = !Object.hasOwn(_object, key) && _value === undefined;
 
-				object[key] = type.parse(_value, empty, depth);
-				delete temp[key];
+				if (!empty && type.isRequired) {
+					object[key] = type.parse(_value, true, depth);
+					delete temp[key];
+				}
 			} catch (error) {
 				cause.describe({ key }).throw(error);
 			}
@@ -201,17 +200,8 @@ export class ObjectType extends Abstract.Type {
 		for (const key of Key.getOwnNamesAndSymbols(temp)) {
 			cause.describe({ key });
 
-			const keyTypeName = Key.getTypeNameByKey(key);
-			const signatures = expression.index[keyTypeName];
-
-			const rawKey = keyTypeName === 'number' ? Number(key) : key;
-			const matches = [];
-
-			for (const signature of signatures) {
-				if (signature.key.isValid(rawKey)) {
-					matches.push(signature);
-				}
-			}
+			const rawKey = Key.getRawKey(key);
+			const matches = expression.index.filter(isSignatureKeyType, rawKey);
 
 			cause.describe({ matched: matches.length });
 

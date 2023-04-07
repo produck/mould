@@ -16,3 +16,4 @@ export class SymbolType extends Abstract.Type {
 }
 
 Feature.Primitive(SymbolType);
+Feature.Key(SymbolType);

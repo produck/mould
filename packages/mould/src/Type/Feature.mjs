@@ -33,12 +33,16 @@ export function Spreadable(TargetType) {
 	};
 }
 
-const FLAG_TRUE = () => true;
+const FLAG_TRUE_DESCRIPTOR = { get: () => true };
 
 export function Primitive(TargetType) {
-	Object.defineProperty(TargetType.prototype, 'isPrimitive', { get: FLAG_TRUE });
+	Object.defineProperty(TargetType.prototype, 'isPrimitive', FLAG_TRUE_DESCRIPTOR);
 }
 
 export function Empty(TargetType) {
-	Object.defineProperty(TargetType.prototype, 'isEmpty', { get: FLAG_TRUE });
+	Object.defineProperty(TargetType.prototype, 'isEmpty', FLAG_TRUE_DESCRIPTOR);
+}
+
+export function Key(TargetType) {
+	Object.defineProperty(TargetType.prototype, 'isKey', FLAG_TRUE_DESCRIPTOR);
 }

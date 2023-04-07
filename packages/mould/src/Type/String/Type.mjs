@@ -16,3 +16,4 @@ export class StringType extends Abstract.Type {
 }
 
 Feature.Primitive(StringType);
+Feature.Key(StringType);

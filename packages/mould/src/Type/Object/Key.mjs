@@ -1,8 +1,8 @@
 import * as Utils from '#Utils';
 
-import * as Number from '../Number/index.mjs';
-import * as String from '../String/index.mjs';
-import * as Symbol from '../Symbol/index.mjs';
+import { Type as NumberType } from '../Number/index.mjs';
+import { Type as StringType } from '../String/index.mjs';
+import { Type as SymbolType } from '../Symbol/index.mjs';
 
 export const getOwnNamesAndSymbols = object => [
 	...Object.getOwnPropertyNames(object),
@@ -10,9 +10,9 @@ export const getOwnNamesAndSymbols = object => [
 ];
 
 const INDEX_LIST = [
-	{ name: 'number', Type: Number.Type },
-	{ name: 'string', Type: String.Type },
-	{ name: 'symbol', Type: Symbol.Type },
+	{ name: 'number', Type: NumberType },
+	{ name: 'string', Type: StringType },
+	{ name: 'symbol', Type: SymbolType },
 ];
 
 function IS_KEY_TYPE(meta) {
@@ -34,4 +34,14 @@ export const getTypeNameByKey = any => {
 	}
 
 	return 'string';
+};
+
+export const getRawKey = key => {
+	const number = Number(key);
+
+	if (Utils.Type.Integer(number) && number >=0) {
+		return number;
+	}
+
+	return key;
 };
