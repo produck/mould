@@ -63,7 +63,7 @@ describe('Type::Abstract', function () {
 			const target = origin.optional();
 
 			assert.notEqual(origin, target);
-			assert.equal(target._meta.expression.fallback(), undefined);
+			assert.equal(target._expression.fallback(), undefined);
 		});
 	});
 
@@ -73,7 +73,7 @@ describe('Type::Abstract', function () {
 			const target = origin.required();
 
 			assert.notEqual(origin, target);
-			assert.equal(target._meta.expression.fallback, null);
+			assert.equal(target._expression.fallback, null);
 		});
 	});
 

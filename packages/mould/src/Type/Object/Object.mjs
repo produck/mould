@@ -46,7 +46,7 @@ export class ObjectType extends Abstract.Type {
 
 		return this.derive({
 			index: [
-				...this._meta.expression.index,
+				...this._expression.index,
 				{ key: keyType, value: valueType },
 			],
 		});
@@ -69,7 +69,7 @@ export class ObjectType extends Abstract.Type {
 			Utils.Error.Throw.Type('key', 'string or symbol');
 		}
 
-		const { properties } = this._meta.expression;
+		const { properties } = this._expression;
 
 		if (!Object.hasOwn(properties, key)) {
 			Utils.Error.Throw(`The key "${key}" is NOT defined.`);
@@ -79,7 +79,7 @@ export class ObjectType extends Abstract.Type {
 	}
 
 	#project(keys, target, mutate) {
-		const { properties } = this._meta.expression;
+		const { properties } = this._expression;
 
 		for (const key of Key.getOwnNamesAndSymbols(keys)) {
 			if (!Object.hasOwn(properties, key)) {
@@ -102,12 +102,12 @@ export class ObjectType extends Abstract.Type {
 
 	omit(keys) {
 		return this.#project(keys, {
-			...this._meta.expression.properties,
+			...this._expression.properties,
 		}, DELETE_KEY);
 	}
 
 	require(keys) {
-		const { properties } = this._meta.expression;
+		const { properties } = this._expression;
 		const target = {}, temp = { ...keys };
 
 		for (const key of Key.getOwnNamesAndSymbols(properties)) {
@@ -147,7 +147,7 @@ export class ObjectType extends Abstract.Type {
 	}
 
 	keys() {
-		return [...this._meta.expression.keys];
+		return [...this._expression.keys];
 	}
 
 	static _expression() {
@@ -167,8 +167,7 @@ export class ObjectType extends Abstract.Type {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
 		}
 
-		const { expression } = this._meta;
-		const { constructor } = expression;
+		const { constructor } = this._expression;
 
 		if (_object.constructor !== constructor) {
 			cause.setType('Constructor').describe({ constructor }).throw();
@@ -179,8 +178,8 @@ export class ObjectType extends Abstract.Type {
 
 		cause.setType('Property').describe({ field: true });
 
-		for (const key of expression.keys) {
-			const type = expression.properties[key];
+		for (const key of this._expression.keys) {
+			const type = this._expression.properties[key];
 
 			try {
 				const _value = _object[key];
@@ -201,7 +200,7 @@ export class ObjectType extends Abstract.Type {
 			cause.describe({ key });
 
 			const rawKey = Key.getRawKey(key);
-			const matches = expression.index.filter(isSignatureKeyType, rawKey);
+			const matches = this._expression.index.filter(isSignatureKeyType, rawKey);
 
 			cause.describe({ matched: matches.length });
 

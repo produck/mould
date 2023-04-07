@@ -4,17 +4,12 @@ import { Mould } from './Mould.mjs';
 export class AbstractType extends Mould {
 	constructor(expression = new.target._expression()) {
 		super();
-
-		this._meta = Object.freeze({
-			constructor: new.target,
-			expression: Object.freeze(expression),
-		});
-
+		this._expression = Object.freeze(expression);
 		Object.freeze(this);
 	}
 
 	get isRequired() {
-		return Utils.Type.Null(this._meta.expression.fallback);
+		return Utils.Type.Null(this._expression.fallback);
 	}
 
 	default(fallback) {
@@ -48,7 +43,7 @@ export class AbstractType extends Mould {
 			Utils.Error.Throw('Parsing too deep.', RangeError);
 		}
 
-		const { fallback } = this._meta.expression;
+		const { fallback } = this._expression;
 
 		if (_empty) {
 			if (fallback === null) {
@@ -67,8 +62,8 @@ export class AbstractType extends Mould {
 
 	/** @returns {typeof this} */
 	derive(_expression) {
-		return new this._meta.constructor({
-			...this._meta.expression,
+		return new this.constructor({
+			...this._expression,
 			..._expression,
 		});
 	}

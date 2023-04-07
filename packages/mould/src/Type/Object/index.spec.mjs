@@ -16,7 +16,7 @@ describe('Type::Object', function () {
 				[Symbol.iterator]: number,
 			});
 
-			const { properties } = type._meta.expression;
+			const { properties } = type._expression;
 
 			assert.equal(properties[0], number);
 			assert.equal(properties.foo, number);
@@ -43,9 +43,7 @@ describe('Type::Object', function () {
 			const number = new NumberType();
 			const type = new ObjectType().index(number, number);
 
-			const { index } = type._meta.expression;
-
-			assert.deepEqual(index, [{ key: number, value: number }]);
+			assert.deepEqual(type._expression.index, [{ key: number, value: number }]);
 		});
 
 		it('should throw if bad keyType.', function () {
@@ -80,11 +78,11 @@ describe('Type::Object', function () {
 			const number = new NumberType();
 			const type = new ObjectType().index(number, number);
 
-			assert.deepEqual(type._meta.expression.index, [
+			assert.deepEqual(type._expression.index, [
 				{ key: number, value: number },
 			]);
 
-			assert.deepEqual(type.exact()._meta.expression.index, []);
+			assert.deepEqual(type.exact()._expression.index, []);
 		});
 	});
 
@@ -92,7 +90,7 @@ describe('Type::Object', function () {
 		it('should create a new type.', function () {
 			const type = new ObjectType().by(Date);
 
-			assert.equal(type._meta.expression.constructor, Date);
+			assert.equal(type._expression.constructor, Date);
 		});
 
 		it('should throw if bad constructor.', function () {

@@ -2,7 +2,7 @@ export function Spreadable(TargetType) {
 	Object.defineProperties(TargetType.prototype, {
 		isSpread: {
 			get() {
-				return this._meta.expression.isSpread;
+				return this._expression.isSpread;
 			},
 		},
 		[Symbol.iterator]: {
@@ -17,7 +17,7 @@ export function Spreadable(TargetType) {
 		},
 		length: {
 			get() {
-				return this._meta.expression.length;
+				return this._expression.length;
 			},
 		},
 	});
