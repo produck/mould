@@ -1,7 +1,7 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 import * as Feature from '#Feature';
-import * as Any from '#Definer/Any/index.mjs';
+import * as Any from '../Any/index.mjs';
 
 export class ArrayType extends Mould.Type {
 	element(element) {

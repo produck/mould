@@ -3,7 +3,7 @@ import * as Mould from '#Mould';
 import * as Feature from '#Feature';
 
 export class SymbolType extends Mould.Type {
-	_normalize(_symbol) {
+	_parse(_symbol) {
 		if (!Utils.Type.Symbol(_symbol)) {
 			new Mould.Cause(_symbol)
 				.setType('Type')

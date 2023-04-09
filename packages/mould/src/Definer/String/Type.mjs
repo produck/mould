@@ -3,7 +3,7 @@ import * as Mould from '#Mould';
 import * as Feature from '#Feature';
 
 export class StringType extends Mould.Type {
-	_normalize(_string) {
+	_parse(_string) {
 		if (!Utils.Type.String(_string)) {
 			new Mould.Cause(_string)
 				.setType('Type')

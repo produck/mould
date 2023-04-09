@@ -14,9 +14,6 @@
 			],
 			"#Mould": [
 				"src/Mould/index.mjs"
-			],
-			"#Definer/*": [
-				"src/Definer/*"
 			]
 		}
 	},

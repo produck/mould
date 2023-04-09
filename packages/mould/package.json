@@ -6,8 +6,7 @@
 	"imports": {
 		"#Utils": "./src/Utils/index.mjs",
 		"#Feature": "./src/Feature/index.mjs",
-		"#Mould": "./src/Mould/index.mjs",
-		"#Definer": "./src/Definer"
+		"#Mould": "./src/Mould/index.mjs"
 	},
 	"scripts": {
 		"test": "mocha \"**/*.spec.mjs\" --no-diff -t 999999999 --exit"

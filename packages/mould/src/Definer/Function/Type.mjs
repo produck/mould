@@ -1,11 +1,12 @@
 import * as Utils from '#Utils';
-import * as Any from './Any.mjs';
-import * as Tuple from './Tuple.mjs';
-import * as Object from './Object.mjs';
+import * as Mould from '#Mould';
+import * as Feature from '#Feature';
+import * as Any from '../Any/index.mjs';
+import * as Tuple from '../Tuple/index.mjs';
 
 const DEFAULT_RETURN = new Any.Type();
 
-export class FunctionType extends Object.Type {
+export class FunctionType extends Mould.Type {
 	sign(args = [], ret = DEFAULT_RETURN) {
 		return this.derive({
 			signatures: [{ args: new Tuple.Type(args), ret }],
@@ -21,10 +22,10 @@ export class FunctionType extends Object.Type {
 	}
 
 	static _expression() {
-		return { ...super._expression(), signatures: [] };
+		return { signatures: [] };
 	}
 
-	_normalize(_function) {
+	_parse(_function) {
 		if (!Utils.Type.Function(_function)) {
 			new Utils.Cause(_function)
 				.setType('Type')
@@ -60,4 +61,4 @@ export class FunctionType extends Object.Type {
 	}
 }
 
-export { FunctionType as Type };
+Feature.AsStructure(FunctionType);

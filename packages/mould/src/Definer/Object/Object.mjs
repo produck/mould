@@ -162,7 +162,7 @@ export class ObjectType extends Mould.Type {
 		};
 	}
 
-	_normalize(_object, _depth) {
+	_parse(_object, _depth) {
 		const cause = new Mould.Cause(_object);
 
 		if (!Utils.Type.Object(_object)) {

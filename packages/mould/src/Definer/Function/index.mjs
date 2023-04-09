@@ -1,1 +1,1 @@
-export { FunctionType as Type } from './Function.mjs';
+export { FunctionType as Type } from './Type.mjs';
