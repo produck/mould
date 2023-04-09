@@ -70,5 +70,5 @@ export class TupleType extends Mould.Type {
 	}
 }
 
-Feature.AsSequence(TupleType);
 Feature.AsStructure(TupleType);
+Feature.AsSequence(TupleType);

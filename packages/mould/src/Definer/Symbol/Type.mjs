@@ -16,3 +16,4 @@ export class SymbolType extends Mould.Type {
 }
 
 Feature.AsPrimitive(SymbolType);
+Feature.AsKey(SymbolType);

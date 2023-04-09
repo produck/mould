@@ -16,3 +16,4 @@ export class StringType extends Mould.Type {
 }
 
 Feature.AsPrimitive(StringType);
+Feature.AsKey(StringType);

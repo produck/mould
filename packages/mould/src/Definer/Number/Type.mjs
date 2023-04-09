@@ -16,3 +16,4 @@ export class NumberType extends Mould.Type {
 }
 
 Feature.AsPrimitive(NumberType);
+Feature.AsKey(NumberType);
