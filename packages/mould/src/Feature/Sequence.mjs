@@ -1,21 +1,26 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 
-export function AsSequence(TargetType) {
+function ToSpread(sourceSequence) {
+	return Object.freeze({
+		...sourceSequence,
+		isSpread: true,
+	});
+}
+
+export function AsSequence(TargetType, min = 0, max = 0) {
 	const { _expression, prototype } = TargetType;
 
-	TargetType._expression = function SequenceExpression() {
+	TargetType._expression = function _expressionAsSequence() {
 		return {
 			..._expression(),
 			sequence: {
 				isSpread: false,
-				min: 0,
-				max: 0,
+				min,
+				max,
 			},
 		};
 	};
-
-	const { _normalize } = prototype;
 
 	Object.defineProperties(prototype, {
 		isSequence: {
@@ -23,35 +28,56 @@ export function AsSequence(TargetType) {
 		},
 		isSpread: {
 			get() {
-				return this._expression.isSpread;
+				return this._expression.sequence.isSpread;
 			},
 		},
 		[Symbol.iterator]: {
 			value: function* SpreadGenerator() {
-				yield this.derive({ isSpread: true });
+				yield this.derive({ sequence: ToSpread(this._expression.sequence) });
 			},
 		},
 		spread: {
 			value: function Spread() {
-				return this.derive({ isSpread: true });
+				return this.derive({ sequence: ToSpread(this._expression.sequence) });
 			},
 		},
 		variable: {
 			get() {
-				const { min, max } = this._expression;
+				const { min, max } = this._expression.sequence;
 
 				return min !== max;
 			},
 		},
+		min: {
+			get() {
+				return this._expression.sequence.min;
+			},
+		},
+		max: {
+			get() {
+				return this._expression.sequence.max;
+			},
+		},
 	});
 
-	function _normalizeAsSequence(_array, depth, fallback) {
+	const { _parse } = prototype;
+
+	prototype._parse = function _parseAsSequence(_array, ...args) {
+		const cause = new Mould.Cause(_array);
+
 		if (!Utils.Type.Array(_array)) {
-			new Mould.Cause.setType('Type').describe({ expected: 'array' }).throw();
+			cause.setType('Type').describe({ expected: 'array' }).throw();
 		}
 
-		return _normalize.call(this, _array, depth, fallback);
-	}
+		const { min, max } = this._expression.sequence;
+		const length = _array.length;
 
-	prototype._normalize = _normalizeAsSequence;
+		cause.setType('SequenceLength').describe({ min, max, length });
+
+		if (_array.length < min || _array.length > max) {
+			cause.throw();
+		}
+
+		return _parse.call(this, _array, ...args);
+	};
 }

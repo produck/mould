@@ -4,48 +4,40 @@ import * as Feature from '#Feature';
 import * as Any from '#Definer/Any/index.mjs';
 
 export class ArrayType extends Mould.Type {
-	element(type) {
-		if (!Mould.Type.isType(type)) {
-			Utils.Error.Throw.Type('type', 'Type');
+	element(element) {
+		if (!Mould.Type.isType(element)) {
+			Utils.Error.Throw.Type('element', 'Type');
 		}
 
-		return this.derive({ elementType: type });
+		return this.derive({ element });
 	}
 
 	static _expression() {
 		return {
-			...super._expression(),
-			elementType: new Any.Type(),
+			element: new Any.Type(),
 		};
 	}
 
-	_normalize(_array, depth, options) {
-		depth++;
-
-		const cause = new Mould.Cause(_array);
-
-		if (!Utils.Type.Array(_array)) {
-			cause.setType('Type').describe({ expected: 'array' }).throw();
-		}
-
-		const object = super._normalize(_array);
-		const { elementType } = this._expression;
+	_parse(_array, ...args) {
+		const { element } = this._expression;
 		const clone = Array.from(_array), array = [];
 
 		for (const index in clone) {
 			try {
-				const _value = clone[index];
-				const value = elementType.parse(_value, false, depth, options);
+				const value = element.parse(clone[index], ...args);
 
 				array.push(value);
 			} catch (error) {
-				cause.setType('ArrayElement').describe({ index }).throw(error);
+				new Mould.Cause(_array)
+					.setType('ArrayElement')
+					.describe({ index })
+					.throw(error);
 			}
 		}
 
-		Object.assign(array, object);
+		return array;
 	}
 }
 
 Feature.AsStructure(ArrayType);
-Feature.AsSequence(ArrayType);
+Feature.AsSequence(ArrayType, 0, Infinity);

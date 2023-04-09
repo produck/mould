@@ -4,6 +4,7 @@
 		"noEmit": true,
 		"target": "ESNext",
 		"baseUrl": "./",
+		"strictNullChecks": true,
 		"paths": {
 			"#Utils": [
 				"src/Utils/index.mjs"
