@@ -4,5 +4,14 @@
 		"noEmit": true,
 		"target": "ESNext",
 		"strictNullChecks": true,
+		"baseUrl": "./",
+		"paths": {
+			"#Utils": [
+				"src/Utils/index.mjs"
+			],
+			"#Mould": [
+				"src/Mould/index.mjs"
+			]
+		}
 	},
 }
