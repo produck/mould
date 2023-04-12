@@ -6,7 +6,7 @@ const APPEND_KEY = (target, key, type) => target[key] = type;
 const DELETE_KEY = (target, key) => delete target[key];
 
 function project(keys, target, mutate) {
-	const { properties } = this._expression;
+	const { field } = this._expression.structure;
 
 	if (!Utils.Type.PlainObjectLike(keys)) {
 		Utils.Error.Throw.Type('keys', 'plain object');
@@ -17,14 +17,14 @@ function project(keys, target, mutate) {
 			Utils.Error.Throw.Type(`keys[${key}]`, 'true');
 		}
 
-		if (!Object.hasOwn(properties, key)) {
+		if (!Object.hasOwn(field, key)) {
 			Utils.Error.Throw(`The key "${key}" is NOT defined.`);
 		}
 
-		mutate(target, key, properties[key]);
+		mutate(target, key, field[key]);
 	}
 
-	return this.derive({ properties: target });
+	return this.derive({ field: target });
 }
 
 export function exact() {
@@ -36,37 +36,34 @@ export function pick(keys) {
 }
 
 export function omit(keys) {
-	return project(keys, { ...this._expression.properties }, DELETE_KEY);
+	return project(keys, { ...this._expression.field }, DELETE_KEY);
 }
 
 export function require(keys) {
-	const properties = {}, temp = { ...keys };
+	const { field: source } = this._expression.structure;
+	const target = {}, temp = { ...keys };
 
-	for (const key of Key.getOwnNamesAndSymbols(this._expression.properties)) {
-		const type = this._expression.properties[key];
-		const expection = keys[key];
+	for (const key of Key.getOwnNamesAndSymbols(source)) {
+		const type = source[key];
+		const expection = temp[key];
 
-		if (!Object.hasOwn(keys, key)) {
-			properties[key] = type;
+		if (!Object.hasOwn(temp, key)) {
+			target[key] = type;
 		}
 
 		if (expection === true) {
-			properties[key] = type.required();
+			target[key] = type.required();
 		}
 
 		if (expection === false) {
-			properties[key] = type.optional();
+			target[key] = type.optional();
 		}
 
-		if (Utils.Type.Function(expection)) {
-			properties[key] = type.default(expection);
+		if (Object.hasOwn(source, key)) {
+			Utils.Error.Type(`keys[${key}]`, 'boolean');
 		}
 
-		if (Object.hasOwn(key)) {
-			Utils.Error.Type(`keys[${key}]`, 'boolean or function');
-		}
-
-		delete keys[key];
+		delete temp[key];
 	}
 
 	const keyList = Key.getOwnNamesAndSymbols(temp);
@@ -75,5 +72,5 @@ export function require(keys) {
 		Utils.Error.Throw(`Undefined keys: ${keyList.join(', ')}`);
 	}
 
-	return this.derive({ properties });
+	return this.derive({ field: target });
 }

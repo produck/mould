@@ -39,5 +39,5 @@ export class ArrayType extends Mould.Type {
 	}
 }
 
-Feature.AsStructure(ArrayType);
 Feature.AsSequence(ArrayType, 0, Infinity);
+Feature.AsStructure(ArrayType);

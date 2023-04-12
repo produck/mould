@@ -18,6 +18,18 @@ export class Type {
 		Object.freeze(this);
 	}
 
+	get isRequired() {
+		return this._expression.required;
+	}
+
+	required() {
+		return this.derive({ required: true });
+	}
+
+	optional() {
+		return this.derive({ required: false });
+	}
+
 	parse(_value, context = new Context(), reference = SYMBOL.NULL_REFERENCE) {
 		if (!Utils.Type.Instance(context, Context)) {
 			Utils.Error.Throw.Type('context', 'Context');
@@ -83,7 +95,7 @@ export class Type {
 	}
 
 	static _expression() {
-		return {};
+		return { required: true };
 	}
 
 	static Expression() {

@@ -15,7 +15,6 @@ export class UnionType extends Abstract.Type {
 
 	static _expression() {
 		return {
-			...super._expression(),
 			namespaces: {},
 		};
 	}

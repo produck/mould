@@ -1,1 +1,1 @@
-export { TupleType as Type } from './Tuple.mjs';
+export { TupleType as Type } from './Type.mjs';

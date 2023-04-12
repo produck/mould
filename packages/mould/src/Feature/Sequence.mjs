@@ -33,12 +33,16 @@ export function AsSequence(TargetType, min = 0, max = 0) {
 		},
 		[Symbol.iterator]: {
 			value: function* SpreadGenerator() {
-				yield this.derive({ sequence: ToSpread(this._expression.sequence) });
+				yield this.derive({
+					sequence: ToSpread(this._expression.sequence),
+				});
 			},
 		},
 		spread: {
 			value: function Spread() {
-				return this.derive({ sequence: ToSpread(this._expression.sequence) });
+				return this.derive({
+					sequence: ToSpread(this._expression.sequence),
+				});
 			},
 		},
 		variable: {

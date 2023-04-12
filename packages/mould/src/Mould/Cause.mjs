@@ -4,6 +4,10 @@ export class Cause {
 	next = null;
 	value = null;
 
+	get [Symbol.toStringTag]() {
+		return 'MouldType';
+	}
+
 	constructor(_value) {
 		this.value = _value;
 	}
