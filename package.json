@@ -1,17 +1,22 @@
 {
-  "name": "@produck/mould-workspace",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "license": "MIT",
-  "workspaces": [
-    "packages/mould"
-  ],
-  "devDependencies": {
-    "c8": "^7.13.0",
-    "eslint": "^8.36.0",
-    "lerna": "^6.5.1"
-  }
+	"name": "@produck/mould-workspace",
+	"private": true,
+	"main": "index.js",
+	"scripts": {
+		"deps:install": "npm -v && npm i && lerna bootstrap",
+		"deps:clean": "lerna clean -y",
+		"lint": "eslint --fix packages/**/*.mjs",
+		"test": "lerna run test --stream --no-prefix",
+		"coverage": "c8 --exclude=**/*.spec.mjs --reporter=lcov npm run test",
+		"publish": "npm run lint && npm test && lerna publish --no-private"
+	},
+	"license": "MIT",
+	"workspaces": [
+		"packages/mould"
+	],
+	"devDependencies": {
+		"c8": "^7.13.0",
+		"eslint": "^8.38.0",
+		"lerna": "^6.6.1"
+	}
 }
