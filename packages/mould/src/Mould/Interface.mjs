@@ -5,7 +5,11 @@ import * as Global from './Global.mjs';
 import { Catcher } from './Catcher.mjs';
 
 export class TypeInterface extends TypeSchema {
+	_assertReady() {}
+
 	Normalizer(catcher = new Catcher(), Reference = null) {
+		this._assertReady();
+
 		if (!Utils.Type.Instance(catcher, Catcher)) {
 			Utils.Error.Throw.Type('catcher', 'Catcher');
 		}
@@ -24,6 +28,8 @@ export class TypeInterface extends TypeSchema {
 	}
 
 	isValid(any) {
+		this._assertReady();
+
 		try {
 			this.parse(any);
 
@@ -34,6 +40,8 @@ export class TypeInterface extends TypeSchema {
 	}
 
 	declare() {
+		this._assertReady();
+
 		return UNDEFINED;
 	}
 }

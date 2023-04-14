@@ -1,4 +1,4 @@
-import './As/Primitive.mjs';
+export { isPrimitive } from './As/Primitive.mjs';
 
 export { NullType } from './Null.mjs';
 export { UndefinedType } from './Undefined.mjs';

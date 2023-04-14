@@ -3,11 +3,10 @@ import * as Mould from '#Mould';
 
 const record = new WeakSet();
 
-Mould.Feature.define('Primitive', (TargetType, _options, next) => {
-	const { prototype } = TargetType;
-	const { _constructor } = prototype;
+Mould.Feature.define('Key', (TargetType, options, next) => {
+	const { _constructor } = TargetType.prototype;
 
-	prototype._constructor = function _constructorAsPrimitive() {
+	TargetType._constructor = function _constructorAsKey() {
 		record.add(this);
 		_constructor.call(this);
 	};
@@ -15,7 +14,7 @@ Mould.Feature.define('Primitive', (TargetType, _options, next) => {
 	next();
 });
 
-export const isPrimitive = type => {
+export const isKey = type => {
 	if (!Utils.Type.Instance(type, Mould.Type)) {
 		Utils.Throw.Type('type', 'Type');
 	}

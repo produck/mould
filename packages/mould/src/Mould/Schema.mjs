@@ -35,7 +35,7 @@ export class TypeSchema {
 		});
 	}
 
-	constructor(expression) {
+	constructor(expression = new.target.Expression()) {
 		this.expression = Object.freeze(expression);
 		Object.freeze(this);
 		this._constructor();
@@ -47,5 +47,23 @@ export class TypeSchema {
 
 	static isType(_type) {
 		return Utils.Type.Instance(_type, this);
+	}
+
+	static isTypeClass(_Type) {
+		if (!Utils.Type.Function(_Type)) {
+			Utils.Throw.Type('Type', 'Type Class');
+		}
+
+		let current = _Type;
+
+		while (current !== Function) {
+			if (current === TypeSchema) {
+				return true;
+			}
+
+			current = Object.getPrototypeOf(current);
+		}
+
+		return false;
 	}
 }
