@@ -9,8 +9,6 @@ export class NullType extends Mould.Type {
 				.describe({ expected: 'null' })
 				.throw();
 		}
-
-		return _null;
 	}
 }
 

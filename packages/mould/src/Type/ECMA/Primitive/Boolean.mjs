@@ -9,8 +9,6 @@ export class BooleanType extends Mould.Type {
 				.describe({ expected: 'boolean' })
 				.throw();
 		}
-
-		return _boolean;
 	}
 }
 

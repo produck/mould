@@ -1,7 +1,7 @@
 import * as Mould from '#Mould';
 
 export class NeverType extends Mould.Type {
-	_parse(_any) {
-		new Mould.Cause(_any).setType('Never').throw();
+	_parse(_value) {
+		new Mould.Cause(_value).setType('Never').throw();
 	}
 }

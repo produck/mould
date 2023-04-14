@@ -22,13 +22,13 @@ export class ArrayType extends Mould.Type {
 		};
 	}
 
-	_parse(_array, ...args) {
+	_parse(_array) {
 		const { element } = this._expression;
 		const clone = Array.from(_array), array = [];
 
 		for (const index in clone) {
 			try {
-				const value = element.parse(clone[index], ...args);
+				const value = element.parse(clone[index]);
 
 				array.push(value);
 			} catch (error) {
@@ -38,12 +38,14 @@ export class ArrayType extends Mould.Type {
 					.throw(error);
 			}
 		}
-
-		return array;
 	}
 }
 
 Mould.Feature.make(as => {
 	as('Structure');
-	as('Sequence');
+
+	as('Sequence', {
+		min: 0,
+		max: Utils.ARRAY_MAX_LENGTH,
+	});
 }, ArrayType);

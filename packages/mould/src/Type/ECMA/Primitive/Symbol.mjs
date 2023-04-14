@@ -9,8 +9,6 @@ export class SymbolType extends Mould.Type {
 				.describe({ expected: 'symbol' })
 				.throw();
 		}
-
-		return _symbol;
 	}
 }
 

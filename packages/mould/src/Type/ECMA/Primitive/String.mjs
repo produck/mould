@@ -9,8 +9,6 @@ export class StringType extends Mould.Type {
 				.describe({ expected: 'string' })
 				.throw();
 		}
-
-		return _string;
 	}
 }
 

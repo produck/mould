@@ -9,8 +9,6 @@ export class UndefinedType extends Mould.Type {
 				.describe({ expected: 'undefined' })
 				.throw();
 		}
-
-		return _undefined;
 	}
 }
 

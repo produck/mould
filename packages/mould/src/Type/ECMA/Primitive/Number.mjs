@@ -9,8 +9,6 @@ export class NumberType extends Mould.Type {
 				.describe({ expected: 'number' })
 				.throw();
 		}
-
-		return _number;
 	}
 }
 
