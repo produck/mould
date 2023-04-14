@@ -3,7 +3,7 @@ import * as Mould from '#Mould';
 
 export class ArrayType extends Mould.Type {
 	_assertReady() {
-		if (!Utils.Type.Instance(this.expression.element, Mould.Type)) {
+		if (!Mould.Type.isType(this.expression.element)) {
 			Utils.Throw('An ArrayType MUST be set element type by .element().');
 		}
 	}

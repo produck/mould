@@ -1,4 +1,3 @@
-export * from './Symbol.mjs';
 export { setStrict } from './Global.mjs';
 export { Cause } from './Cause.mjs';
 export { Catcher } from './Catcher.mjs';

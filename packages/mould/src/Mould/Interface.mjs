@@ -1,8 +1,9 @@
 import * as Utils from '#Utils';
 import { TypeSchema } from './Schema.mjs';
-import { UNDEFINED } from './Symbol.mjs';
 import * as Global from './Global.mjs';
 import { Catcher } from './Catcher.mjs';
+
+const UNDEFINED = Symbol.for('Mould::Undefined');
 
 export class TypeInterface extends TypeSchema {
 	_assertReady() {}

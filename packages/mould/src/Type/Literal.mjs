@@ -8,13 +8,12 @@ const EXPECTED_MAP = {
 	'string': Utils.Type.String,
 	'symbol': Utils.Type.Symbol,
 	'boolean': Utils.Type.Boolean,
-	'null': Utils.Type.Null,
-	'undefined': Utils.Type.Undefined,
+	'bigint': Utils.Type.BigInt,
 };
 
 const EXPECTED = Object.keys(EXPECTED_MAP).join(', ');
 
-export class NeverType extends Mould.Type {
+export class LiteralType extends Mould.Type {
 	_assertReady() {
 		return this.expression.target !== UNSPECIFIED;
 	}

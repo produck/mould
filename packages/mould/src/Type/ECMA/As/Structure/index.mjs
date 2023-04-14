@@ -105,7 +105,7 @@ Mould.Feature.define('Structure', (TargetType, options, next) => {
 });
 
 export const isStructure = type => {
-	if (!Utils.Type.Instance(type, Mould.Type)) {
+	if (!Mould.Type.isType(type)) {
 		Utils.Throw.Type('type', 'Type');
 	}
 

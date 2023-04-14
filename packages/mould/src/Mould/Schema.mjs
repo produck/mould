@@ -1,5 +1,4 @@
 import * as Utils from '#Utils';
-import { CONSTRUCTOR } from './Symbol.mjs';
 
 export class TypeSchema {
 	_parse() {
@@ -11,10 +10,6 @@ export class TypeSchema {
 
 	static _Expression() {
 		return {};
-	}
-
-	get [CONSTRUCTOR]() {
-		return TypeSchema;
 	}
 
 	parse(_value) {
@@ -29,13 +24,13 @@ export class TypeSchema {
 	}
 
 	derive(_expression) {
-		return new this[CONSTRUCTOR]({
+		return new this.constructor({
 			...this.expression,
 			..._expression,
 		});
 	}
 
-	constructor(expression = new.target.Expression()) {
+	constructor(expression = this.constructor.Expression()) {
 		this.expression = Object.freeze(expression);
 		Object.freeze(this);
 		this._constructor();

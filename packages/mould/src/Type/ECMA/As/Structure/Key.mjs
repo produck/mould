@@ -15,7 +15,7 @@ Mould.Feature.define('Key', (TargetType, options, next) => {
 });
 
 export const isKey = type => {
-	if (!Utils.Type.Instance(type, Mould.Type)) {
+	if (!Mould.Type.isType(type)) {
 		Utils.Throw.Type('type', 'Type');
 	}
 

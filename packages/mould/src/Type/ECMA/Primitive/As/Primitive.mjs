@@ -16,7 +16,7 @@ Mould.Feature.define('Primitive', (TargetType, _options, next) => {
 });
 
 export const isPrimitive = type => {
-	if (!Utils.Type.Instance(type, Mould.Type)) {
+	if (!Mould.Type.isType(type)) {
 		Utils.Throw.Type('type', 'Type');
 	}
 
