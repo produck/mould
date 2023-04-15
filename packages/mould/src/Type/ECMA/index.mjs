@@ -6,3 +6,4 @@ export { ObjectType } from './Object.mjs';
 export { ArrayType } from './Array.mjs';
 export { TupleType } from './Tuple.mjs';
 export { NeverType } from './Never.mjs';
+export { FunctionType } from './Function.mjs';

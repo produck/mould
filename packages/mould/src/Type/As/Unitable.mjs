@@ -3,11 +3,7 @@ import * as Mould from '#Mould';
 
 const registry = new WeakMap();
 
-function assertTypeList() {
-
-}
-
-export function defineRule(Type, rule) {
+export function appendRule(Type, rule) {
 	if (!Mould.Type.isTypeClass(Type)) {
 		Utils.Throw.Type('Type', 'Type Class');
 	}
@@ -23,40 +19,53 @@ export function defineRule(Type, rule) {
 	registry.get(Type).push(rule);
 }
 
-class UnionType extends Mould.Type {
+export class UnionType extends Mould.Type {
 	_assertReady() {
 		return this.expression.typeList.length > 0;
 	}
 
-	or(_type) {
-		if (!Mould.Type.isType(_type)) {
-			Utils.Throw.Type('type', 'Type');
-		}
-
-		if (UnionType.isType(_type)) {
-			let target = this;
-
-			for (const type of _type.expression.typeList) {
-				target = target.or(type);
+	or(...typeList) {
+		for (const index in typeList) {
+			if (!Mould.Type.isType(typeList[index])) {
+				Utils.Throw.Type(`...typeList[${index}]`, 'Type');
 			}
 
-			return target;
-		} else {
-			const ruleList = registry.get(_type.constructor);
-			const { typeList } = this.expression;
+			const _type = typeList[index];
 
-			let current = [...typeList];
+			if (UnionType.isType(_type)) {
+				let target = this;
 
-			for (const rule of ruleList) {
-				const _current = rule(current, _type);
+				for (const type of _type.expression.typeList) {
+					target = target.or(type);
+				}
 
-				assertTypeList(_current);
-				current = _current;
+				return target;
+			} else {
+				const ruleList = registry.get(_type.constructor);
+				const { typeList } = this.expression;
+
+				let current = [...typeList];
+
+				for (const rule of ruleList) {
+					const _current = rule(current, _type);
+
+					if (!Utils.Type.Array(_current)) {
+						Utils.Throw('Bad union rule return not an array.');
+					}
+
+					for (const index in _current) {
+						if (!Mould.Type.isType(_current[index])) {
+							Utils.Throw(`Bad union rule set a bad type at [${index}].`);
+						}
+					}
+
+					current = _current;
+				}
+
+				return this.derive({
+					typeList: Object.freeze(current),
+				});
 			}
-
-			return this.derive({
-				typeList: Object.freeze(current),
-			});
 		}
 	}
 

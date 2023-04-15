@@ -9,38 +9,44 @@ const EXPECTED_MAP = {
 	'symbol': Utils.Type.Symbol,
 	'boolean': Utils.Type.Boolean,
 	'bigint': Utils.Type.BigInt,
+	'undefined': Utils.Type.Undefined,
+	'null': Utils.Type.Null,
 };
 
 const EXPECTED = Object.keys(EXPECTED_MAP).join(', ');
 
 export class LiteralType extends Mould.Type {
 	_assertReady() {
-		return this.expression.target !== UNSPECIFIED;
+		return this.expression.value !== UNSPECIFIED;
 	}
 
-	is(target) {
+	is(value) {
 		for (const type in EXPECTED_MAP) {
-			if (EXPECTED_MAP[type](target)) {
-				return this.derive({ target });
+			if (EXPECTED_MAP[type](value)) {
+				return this.derive({ value });
 			}
 		}
 
-		Utils.Throw.Type('target', EXPECTED);
+		Utils.Throw.Type('value', EXPECTED);
+	}
+
+	get value() {
+		return this.expression.value;
 	}
 
 	static _Expression() {
 		return {
-			target: UNSPECIFIED,
+			value: UNSPECIFIED,
 		};
 	}
 
 	_parse(_literal) {
-		const { target } = this.expression;
+		const { value } = this.expression;
 
-		if (_literal !== target) {
+		if (_literal !== value) {
 			new Mould.Cause(_literal)
 				.setType('Type')
-				.describe({ expected: String(target) })
+				.describe({ expected: String(value) })
 				.throw();
 		}
 	}
