@@ -25,48 +25,48 @@ export class UnionType extends Mould.Type {
 		return this.expression.typeList.length > 0;
 	}
 
-	or(...typeList) {
-		for (const index in typeList) {
-			if (!Mould.Type.isType(typeList[index])) {
-				Utils.Throw.Type(`...typeList[${index}]`, 'Type');
+	or(type) {
+		if (!Mould.Type.isType(type)) {
+			Utils.Throw.Type('type', 'Type');
+		}
+
+		if (UnionType.isType(type)) {
+			let target = this;
+
+			for (const type of type.expression.typeList) {
+				target = target.or(type);
 			}
 
-			const _type = typeList[index];
+			return target;
+		} else {
+			const ruleList = registry.get(type.constructor);
+			const { typeList } = this.expression;
 
-			if (UnionType.isType(_type)) {
-				let target = this;
+			let current = [...typeList];
 
-				for (const type of _type.expression.typeList) {
-					target = target.or(type);
+			for (const rule of ruleList) {
+				const _current = rule(current, type);
+
+				if (!Utils.Type.Array(_current)) {
+					Utils.Throw('Bad union rule return not an array.');
 				}
 
-				return target;
-			} else {
-				const ruleList = registry.get(_type.constructor);
-				const { typeList } = this.expression;
-
-				let current = [...typeList];
-
-				for (const rule of ruleList) {
-					const _current = rule(current, _type);
-
-					if (!Utils.Type.Array(_current)) {
-						Utils.Throw('Bad union rule return not an array.');
+				for (const index in _current) {
+					if (!Mould.Type.isType(_current[index])) {
+						Utils.Throw(`Bad union rule set a bad type at [${index}].`);
 					}
-
-					for (const index in _current) {
-						if (!Mould.Type.isType(_current[index])) {
-							Utils.Throw(`Bad union rule set a bad type at [${index}].`);
-						}
-					}
-
-					current = _current;
 				}
 
-				return this.derive({
-					typeList: Object.freeze(current),
-				});
+				current = _current;
 			}
+
+			if (current.length === 1) {
+				return current[0];
+			}
+
+			return this.derive({
+				typeList: Object.freeze(current),
+			});
 		}
 	}
 
@@ -89,6 +89,8 @@ export class UnionType extends Mould.Type {
 	}
 }
 
+const UNION = new UnionType();
+
 Mould.Feature.define('Unitalbe', (TargetType, options, next) => {
 	const { prototype } = TargetType;
 
@@ -101,7 +103,7 @@ Mould.Feature.define('Unitalbe', (TargetType, options, next) => {
 			return this;
 		}
 
-		return new UnionType().or(type);
+		return UNION.or(type);
 	};
 
 	next();
@@ -116,3 +118,7 @@ Mould.Feature.make(as => as('Key', unionType => {
 
 	return true;
 }), UnionType);
+
+export function Or(...typeList) {
+	return typeList.reduce((union, type) => union.or(type), UNION);
+}

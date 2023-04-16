@@ -12,8 +12,6 @@ const EXPECTED_MAP = {
 	'symbol': Utils.Type.Symbol,
 	'boolean': Utils.Type.Boolean,
 	'bigint': Utils.Type.BigInt,
-	'undefined': Utils.Type.Undefined,
-	'null': Utils.Type.Null,
 };
 
 const EXPECTED = Object.keys(EXPECTED_MAP).join(', ');
@@ -54,6 +52,9 @@ export class LiteralType extends Mould.Type {
 		}
 	}
 }
+
+export const NULL = new LiteralType({ value: null });
+export const UNDEFINED = new LiteralType({ value: undefined });
 
 const LITERAL_VALUE_TYPE_MAP = {
 	'number': ECMA.NumberType,

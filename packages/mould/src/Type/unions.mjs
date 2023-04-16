@@ -1,12 +1,11 @@
 import * as Mould from '#Mould';
 import { appendRule } from './As/Unitable.mjs';
+import { NeverType, NEVER } from './As/Intersectable.mjs';
 
 import {
 	StringType, BooleanType, NumberType, BigIntType, SymbolType,
 	ObjectType, ArrayType, TupleType, FunctionType,
 } from './ECMA/index.mjs';
-
-import { NeverType } from './Never.mjs';
 
 const PRIMITIVES = [StringType, BooleanType, NumberType, BigIntType, SymbolType];
 const STRUCTURES = [ObjectType, ArrayType, TupleType, FunctionType];
@@ -40,4 +39,8 @@ PRIMITIVES.forEach(Type => {
 
 		return targetList;
 	});
+});
+
+appendRule(NeverType, function NoNeverForever(sources) {
+	return sources.length === 0 ? NEVER : sources;
 });
