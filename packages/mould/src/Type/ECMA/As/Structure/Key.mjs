@@ -3,11 +3,14 @@ import * as Mould from '#Mould';
 
 const record = new WeakSet();
 
-Mould.Feature.define('Key', (TargetType, options, next) => {
+Mould.Feature.define('Key', (TargetType, isKey, next) => {
 	const { _constructor } = TargetType.prototype;
 
 	TargetType._constructor = function _constructorAsKey() {
-		record.add(this);
+		if (isKey(this)) {
+			record.add(this);
+		}
+
 		_constructor.call(this);
 	};
 

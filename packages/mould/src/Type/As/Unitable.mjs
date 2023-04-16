@@ -1,22 +1,23 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
+import * as ECMA from '../ECMA/index.mjs';
 
-const registry = new WeakMap();
+const registry = new Map();
 
-export function appendRule(Type, rule) {
+export function appendRule(Type, infer) {
 	if (!Mould.Type.isTypeClass(Type)) {
 		Utils.Throw.Type('Type', 'Type Class');
 	}
 
-	if (!Utils.Type.Function(rule)) {
-		Utils.Throw.Type('filter', 'function');
+	if (!Utils.Type.Function(infer)) {
+		Utils.Throw.Type('infer', 'function');
 	}
 
 	if (!registry.has(Type)) {
 		registry.set(Type, []);
 	}
 
-	registry.get(Type).push(rule);
+	registry.get(Type).push(infer);
 }
 
 export class UnionType extends Mould.Type {
@@ -96,8 +97,22 @@ Mould.Feature.define('Unitalbe', (TargetType, options, next) => {
 			Utils.Throw.Type('type', 'Type');
 		}
 
+		if (type === this) {
+			return this;
+		}
+
 		return new UnionType().or(type);
 	};
 
 	next();
 });
+
+Mould.Feature.make(as => as('Key', unionType => {
+	for (const type of unionType.expression.typeList) {
+		if (!ECMA.isKey(type)) {
+			return false;
+		}
+	}
+
+	return true;
+}), UnionType);

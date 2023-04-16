@@ -1,5 +1,8 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
+import * as ECMA from './ECMA/index.mjs';
+import { appendRule } from './As/Unitable.mjs';
+import { NeverType } from './Never.mjs';
 
 const UNSPECIFIED = Symbol('Mould::Type::Literal::Unspecified');
 
@@ -51,3 +54,29 @@ export class LiteralType extends Mould.Type {
 		}
 	}
 }
+
+const LITERAL_VALUE_TYPE_MAP = {
+	'number': ECMA.NumberType,
+	'string': ECMA.StringType,
+	'symbol': ECMA.SymbolType,
+	'boolean': ECMA.BooleanType,
+	'bigint': ECMA.BigIntType,
+};
+
+appendRule(LiteralType, function NoAbstractAndNoSameValue(sources, target) {
+	const targetList = sources.filter(type => !NeverType.isType(type));
+
+	if (targetList.length === 0) {
+		return [target];
+	}
+
+	const SimilarType = LITERAL_VALUE_TYPE_MAP[typeof target.value];
+
+	if (targetList.some(type => SimilarType.isType(type))) {
+		return targetList;
+	}
+
+	return targetList.some(type => {
+		return LiteralType.isType(type) && type.value === target.value;
+	}) ? targetList : [...targetList, target];
+});

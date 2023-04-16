@@ -1,12 +1,7 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 
-import * as Primitive from '../../Primitive/index.mjs';
 import * as Key from './Key.mjs';
-
-Mould.Feature.make(as => as('Key'), Primitive.NumberType);
-Mould.Feature.make(as => as('Key'), Primitive.StringType);
-Mould.Feature.make(as => as('Key'), Primitive.SymbolType);
 
 export function field(_field) {
 	if (!Utils.Type.PlainObjectLike(_field)) {
