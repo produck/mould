@@ -1,10 +1,7 @@
 import * as Utils from '#Utils';
 
 export class TypeSchema {
-	_parse() {
-		// check _value
-		// update result
-	}
+	_parse() {}
 
 	_constructor() {}
 
@@ -52,7 +49,7 @@ export class TypeSchema {
 
 		let current = _Type;
 
-		while (current !== Function) {
+		while (current !== null) {
 			if (current === TypeSchema) {
 				return true;
 			}
