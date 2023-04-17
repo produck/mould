@@ -1,8 +1,8 @@
 function ToSpread(sourceSequence) {
-	return Object.freeze({
+	return {
 		...sourceSequence,
 		isSpread: true,
-	});
+	};
 }
 
 export function* SpreadGenerator() {

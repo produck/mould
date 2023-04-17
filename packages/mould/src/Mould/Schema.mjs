@@ -31,9 +31,10 @@ export class TypeSchema {
 	}
 
 	constructor(expression = this.constructor.Expression()) {
-		this.expression = Object.freeze(expression);
-		Object.freeze(this);
+		this.expression = expression;
 		this._constructor();
+		Utils.deepFreeze(expression);
+		Object.freeze(this);
 	}
 
 	static Expression() {

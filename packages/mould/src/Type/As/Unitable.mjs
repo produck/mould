@@ -65,14 +65,14 @@ export class UnionType extends Mould.Type {
 			}
 
 			return this.derive({
-				typeList: Object.freeze(current),
+				typeList: current,
 			});
 		}
 	}
 
 	static _Expression() {
 		return {
-			typeList: Object.freeze([]),
+			typeList: [],
 		};
 	}
 
@@ -89,9 +89,9 @@ export class UnionType extends Mould.Type {
 	}
 }
 
-const UNION = new UnionType();
+export const UNION = new UnionType();
 
-Mould.Feature.define('Unitalbe', (TargetType, options, next) => {
+Mould.Feature.define('Unitalbe', (TargetType, options) => {
 	const { prototype } = TargetType;
 
 	prototype.or = function or(type) {
@@ -105,8 +105,6 @@ Mould.Feature.define('Unitalbe', (TargetType, options, next) => {
 
 		return UNION.or(type);
 	};
-
-	next();
 });
 
 Mould.Feature.make(as => as('Key', unionType => {
@@ -118,7 +116,3 @@ Mould.Feature.make(as => as('Key', unionType => {
 
 	return true;
 }), UnionType);
-
-export function Or(...typeList) {
-	return typeList.reduce((union, type) => union.or(type), UNION);
-}

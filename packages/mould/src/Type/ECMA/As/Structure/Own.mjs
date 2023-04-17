@@ -20,11 +20,8 @@ export function field(_field) {
 		field[key] = type;
 	}
 
-	Object.freeze(field);
-	Object.freeze(keys);
-
 	return this.derive({
-		structure: Object.freeze({ field, keys }),
+		structure: { field, keys },
 	});
 }
 
@@ -44,16 +41,13 @@ export function index(keyType, valueType) {
 	const { structure } = this._expression;
 
 	return this.derive({
-		structure: Object.freeze({
+		structure: {
 			...structure,
-			index: Object.freeze([
-				...structure.index,
-				Object.freeze({
-					key: keyType,
-					value: valueType,
-				}),
-			]),
-		}),
+			index: [...structure.index, {
+				key: keyType,
+				value: valueType,
+			}],
+		},
 	});
 }
 

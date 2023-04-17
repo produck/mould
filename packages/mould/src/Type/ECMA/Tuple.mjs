@@ -25,9 +25,6 @@ export class TupleType extends Mould.Type {
 			}
 		}
 
-		Object.freeze(sequence);
-		Object.freeze(elementList);
-
 		return this.derive({ sequence, elementList });
 	}
 

@@ -47,7 +47,7 @@ export class NeverType extends Mould.Type {
 export const ANY = new AnyType();
 export const NEVER = new NeverType();
 
-Mould.Feature.define('Intersectable', (TargetType, options, next) => {
+Mould.Feature.define('Intersectable', (TargetType, options) => {
 	const { prototype } = TargetType;
 
 	prototype.and = function and(type) {
@@ -56,6 +56,14 @@ Mould.Feature.define('Intersectable', (TargetType, options, next) => {
 		}
 
 		if (type === this) {
+			return this;
+		}
+
+		if (AnyType.isType(this)) {
+			return type;
+		}
+
+		if (AnyType.isType(type)) {
 			return this;
 		}
 
@@ -70,10 +78,4 @@ Mould.Feature.define('Intersectable', (TargetType, options, next) => {
 
 		return registry.get(pair)(...args);
 	};
-
-	next();
 });
-
-export function And(...typeList) {
-	return typeList.reduce((last, type) => last.or(type), ANY);
-}

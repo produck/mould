@@ -1,11 +1,9 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 
-const record = new WeakSet();
+const STRUCTURE_REFERENCE_SET = new WeakSet();
 
-Mould.Feature.define('Structure', (TargetType, options, next) => {
-	next();
-
+Mould.Feature.define('Structure', (TargetType, options) => {
 	const { _expression, prototype } = TargetType;
 	const { _parse, _constructor } = prototype;
 
@@ -22,7 +20,7 @@ Mould.Feature.define('Structure', (TargetType, options, next) => {
 	};
 
 	prototype._constructor = function _constructorAsPrimitive() {
-		record.add(this);
+		STRUCTURE_REFERENCE_SET.add(this);
 		_constructor.call(this);
 	};
 
@@ -109,7 +107,7 @@ export const isStructure = type => {
 		Utils.Throw.Type('type', 'Type');
 	}
 
-	return record.has(type);
+	return STRUCTURE_REFERENCE_SET.has(type);
 };
 
 export { isKey } from './Key.mjs';

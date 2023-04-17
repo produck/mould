@@ -4,9 +4,9 @@ import * as Mould from '#Mould';
 import * as Method from './Method.mjs';
 import * as Getter from './Getter.mjs';
 
-const record = new WeakSet();
+const SEQUENCE_REFERENCE_SET = new WeakSet();
 
-Mould.Feature.define('Sequence', (TargetType, options, next) => {
+Mould.Feature.define('Sequence', (TargetType, options) => {
 	const { _expression, prototype } = TargetType;
 
 	TargetType._expression = function _expressionAsSequence() {
@@ -32,7 +32,7 @@ Mould.Feature.define('Sequence', (TargetType, options, next) => {
 	const { _parse, _constructor } = prototype;
 
 	prototype._constructor = function _constructorAsPrimitive() {
-		record.add(this);
+		SEQUENCE_REFERENCE_SET.add(this);
 		_constructor.call(this);
 	};
 
@@ -54,8 +54,6 @@ Mould.Feature.define('Sequence', (TargetType, options, next) => {
 
 		return _parse.call(this, _array, ...args);
 	};
-
-	next();
 }, ['Structure']);
 
 export const isSequence = type => {
@@ -63,5 +61,5 @@ export const isSequence = type => {
 		Utils.Throw.Type('type', 'Type');
 	}
 
-	return record.has(type);
+	return SEQUENCE_REFERENCE_SET.has(type);
 };

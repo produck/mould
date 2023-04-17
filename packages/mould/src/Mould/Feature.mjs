@@ -31,25 +31,29 @@ export function define(name, decorator, dependencies = []) {
 	return modifier;
 }
 
-export function make(factory, _Type) {
+export function make(_stack, _Type) {
 	if (!TypeSchema.isTypeClass(_Type)) {
 		Utils.Throw.Type('Type', 'Type Class');
 	}
 
-	const planList = [];
-
-	factory(function as(name, options) {
-		planList.push({ name, options });
-	});
-
-	// Check deps
+	const stack = [..._stack];
 
 	(function install() {
-		if (planList.length > 0) {
-			const spec = planList.shift();
-			const modifier = registry.get(spec.name);
+		if (stack.length > 0) {
+			const options = stack.pop();
+			const modifier = registry.get(options.name);
 
-			modifier.decorator(_Type, spec.options, install);
+			DEPS: for (const name of modifier.dependencies) {
+				for (const options of stack) {
+					if (options.name === name) {
+						continue DEPS;
+					}
+				}
+
+				Utils.Throw(`Dependency feature ${name} is required.`);
+			}
+
+			modifier.decorator(_Type, options, install);
 		}
 	})();
 
