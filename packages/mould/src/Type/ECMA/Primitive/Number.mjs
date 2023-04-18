@@ -12,4 +12,7 @@ export class NumberType extends Mould.Type {
 	}
 }
 
-Mould.Feature.make(as => as('Primitive'), NumberType);
+Mould.Feature.make(NumberType, {
+	name: 'Primitive',
+	isPrimitive: () => true,
+});

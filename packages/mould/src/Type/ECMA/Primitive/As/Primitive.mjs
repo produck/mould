@@ -1,14 +1,19 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 
-const PRIMITIVE_REFERENCE_SET = new WeakSet();
+const PRIMITIVE_REGISTRY = new WeakSet();
 
-Mould.Feature.define('Primitive', (TargetType, _options) => {
+Mould.Feature.define('Primitive', function AsPrimitive(TargetType, {
+	isPrimitive,
+}) {
 	const { prototype } = TargetType;
 	const { _constructor } = prototype;
 
 	prototype._constructor = function _constructorAsPrimitive() {
-		PRIMITIVE_REFERENCE_SET.add(this);
+		if (isPrimitive(this.expression)) {
+			PRIMITIVE_REGISTRY.add(this);
+		}
+
 		_constructor.call(this);
 	};
 });
@@ -18,5 +23,5 @@ export const isPrimitive = type => {
 		Utils.Throw.Type('type', 'Type');
 	}
 
-	return PRIMITIVE_REFERENCE_SET.has(type);
+	return PRIMITIVE_REGISTRY.has(type);
 };

@@ -12,4 +12,7 @@ export class StringType extends Mould.Type {
 	}
 }
 
-Mould.Feature.make(as => as('Primitive'), StringType);
+Mould.Feature.make(StringType, {
+	name: 'Primitive',
+	isPrimitive: () => true,
+});

@@ -12,4 +12,7 @@ export class BooleanType extends Mould.Type {
 	}
 }
 
-Mould.Feature.make(as => as('Primitive'), BooleanType);
+Mould.Feature.make(BooleanType, {
+	name: 'Primitive',
+	isPrimitive: () => true,
+});

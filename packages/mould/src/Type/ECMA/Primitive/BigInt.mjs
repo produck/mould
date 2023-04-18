@@ -9,9 +9,10 @@ export class BigIntType extends Mould.Type {
 				.describe({ expected: 'bigint' })
 				.throw();
 		}
-
-		return _bigint;
 	}
 }
 
-Mould.Feature.make(as => as('Primitive'), BigIntType);
+Mould.Feature.make(BigIntType, {
+	name: 'Primitive',
+	isPrimitive: () => true,
+});

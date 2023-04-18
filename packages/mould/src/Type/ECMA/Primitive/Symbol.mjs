@@ -12,4 +12,7 @@ export class SymbolType extends Mould.Type {
 	}
 }
 
-Mould.Feature.make(as => as('Primitive'), SymbolType);
+Mould.Feature.make(SymbolType, {
+	name: 'Primitive',
+	isPrimitive: () => true,
+});

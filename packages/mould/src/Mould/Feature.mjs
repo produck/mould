@@ -31,7 +31,7 @@ export function define(name, decorator, dependencies = []) {
 	return modifier;
 }
 
-export function make(_stack, _Type) {
+export function make(_Type, ..._stack) {
 	if (!TypeSchema.isTypeClass(_Type)) {
 		Utils.Throw.Type('Type', 'Type Class');
 	}
@@ -40,7 +40,7 @@ export function make(_stack, _Type) {
 
 	(function install() {
 		if (stack.length > 0) {
-			const options = stack.pop();
+			const options = stack.shift();
 			const modifier = registry.get(options.name);
 
 			DEPS: for (const name of modifier.dependencies) {
