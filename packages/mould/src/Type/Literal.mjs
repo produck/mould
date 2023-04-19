@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 import * as ECMA from './ECMA/index.mjs';
 import { appendRule } from './As/Unitable.mjs';
@@ -7,11 +7,11 @@ import { NeverType } from './Never.mjs';
 const UNSPECIFIED = Symbol('Mould::Type::Literal::Unspecified');
 
 const EXPECTED_MAP = {
-	'number': Utils.Type.Number,
-	'string': Utils.Type.String,
-	'symbol': Utils.Type.Symbol,
-	'boolean': Utils.Type.Boolean,
-	'bigint': Utils.Type.BigInt,
+	'number': Lang.Type.Number,
+	'string': Lang.Type.String,
+	'symbol': Lang.Type.Symbol,
+	'boolean': Lang.Type.Boolean,
+	'bigint': Lang.Type.BigInt,
 };
 
 const EXPECTED = Object.keys(EXPECTED_MAP).join(', ');
@@ -28,7 +28,7 @@ export class LiteralType extends Mould.Type {
 			}
 		}
 
-		Utils.Throw.Type('value', EXPECTED);
+		Lang.Throw.Type('value', EXPECTED);
 	}
 
 	get value() {

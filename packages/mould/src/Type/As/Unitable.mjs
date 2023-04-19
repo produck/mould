@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 import * as ECMA from '../ECMA/index.mjs';
 
@@ -6,11 +6,11 @@ const registry = new Map();
 
 export function appendRule(Type, infer) {
 	if (!Mould.Type.isTypeClass(Type)) {
-		Utils.Throw.Type('Type', 'Type Class');
+		Lang.Throw.Type('Type', 'Type Class');
 	}
 
-	if (!Utils.Type.Function(infer)) {
-		Utils.Throw.Type('infer', 'function');
+	if (!Lang.Type.Function(infer)) {
+		Lang.Throw.Type('infer', 'function');
 	}
 
 	if (!registry.has(Type)) {
@@ -27,7 +27,7 @@ export class UnionType extends Mould.Type {
 
 	or(type) {
 		if (!Mould.Type.isType(type)) {
-			Utils.Throw.Type('type', 'Type');
+			Lang.Throw.Type('type', 'Type');
 		}
 
 		if (UnionType.isType(type)) {
@@ -47,13 +47,13 @@ export class UnionType extends Mould.Type {
 			for (const rule of ruleList) {
 				const _current = rule(current, type);
 
-				if (!Utils.Type.Array(_current)) {
-					Utils.Throw('Bad union rule return not an array.');
+				if (!Lang.Type.Array(_current)) {
+					Lang.Throw('Bad union rule return not an array.');
 				}
 
 				for (const index in _current) {
 					if (!Mould.Type.isType(_current[index])) {
-						Utils.Throw(`Bad union rule set a bad type at [${index}].`);
+						Lang.Throw(`Bad union rule set a bad type at [${index}].`);
 					}
 				}
 
@@ -96,7 +96,7 @@ Mould.Feature.define('Unitalbe', (TargetType, options) => {
 
 	prototype.or = function or(type) {
 		if (Mould.Type.isType(type)) {
-			Utils.Throw.Type('type', 'Type');
+			Lang.Throw.Type('type', 'Type');
 		}
 
 		if (type === this) {

@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import { TypeSchema } from './Schema.mjs';
 
 const registry = new Map();
@@ -12,16 +12,16 @@ class Modifier {
 }
 
 export function define(name, decorator, dependencies = []) {
-	if (!Utils.Type.String(name)) {
-		Utils.Throw.Type('name', 'string');
+	if (!Lang.Type.String(name)) {
+		Lang.Throw.Type('name', 'string');
 	}
 
-	if (!Utils.Type.Function(decorator)) {
-		Utils.Throw.Type('decorator', 'function');
+	if (!Lang.Type.Function(decorator)) {
+		Lang.Throw.Type('decorator', 'function');
 	}
 
 	if (registry.has(name)) {
-		Utils.Throw(`Duplicated feature name(${name}).`);
+		Lang.Throw(`Duplicated feature name(${name}).`);
 	}
 
 	const modifier = new Modifier(name, decorator, dependencies);
@@ -33,7 +33,7 @@ export function define(name, decorator, dependencies = []) {
 
 export function make(_Type, ..._stack) {
 	if (!TypeSchema.isTypeClass(_Type)) {
-		Utils.Throw.Type('Type', 'Type Class');
+		Lang.Throw.Type('Type', 'Type Class');
 	}
 
 	const stack = [..._stack];
@@ -50,7 +50,7 @@ export function make(_Type, ..._stack) {
 					}
 				}
 
-				Utils.Throw(`Dependency feature ${name} is required.`);
+				Lang.Throw(`Dependency feature ${name} is required.`);
 			}
 
 			modifier.decorator(_Type, options, install);

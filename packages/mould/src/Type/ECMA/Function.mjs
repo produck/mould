@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 import { TupleType } from './Tuple.mjs';
 
@@ -18,7 +18,7 @@ export class FunctionType extends Mould.Type {
 	}
 
 	_parse(_function, result) {
-		if (!Utils.Type.Function(_function)) {
+		if (!Lang.Type.Function(_function)) {
 			new Mould.Cause(_function)
 				.setType('Type')
 				.describe({ expected: 'function' })
@@ -37,7 +37,7 @@ export class FunctionType extends Mould.Type {
 			}
 
 			if (matchedSignatureList.length === 0) {
-				Utils.Error.Throw('Bad arguments.');
+				Lang.Error.Throw('Bad arguments.');
 			}
 
 			const _return = _function.apply(this, _arguments);
@@ -48,7 +48,7 @@ export class FunctionType extends Mould.Type {
 				}
 			}
 
-			Utils.Error.Throw('Bad return');
+			Lang.Error.Throw('Bad return');
 		} }[_function.name];
 	}
 }

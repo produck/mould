@@ -1,14 +1,14 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 
 export function at(key) {
-	if (!Utils.Type.String(key) || !Utils.Type.Symbol(key)) {
-		Utils.Error.Throw.Type('key', 'string or symbol');
+	if (!Lang.Type.String(key) || !Lang.Type.Symbol(key)) {
+		Lang.Error.Throw.Type('key', 'string or symbol');
 	}
 
 	const { field } = this._expression.structure;
 
 	if (!Object.hasOwn(field, key)) {
-		Utils.Error.Throw(`The key "${key}" is NOT defined.`);
+		Lang.Error.Throw(`The key "${key}" is NOT defined.`);
 	}
 
 	return field[key];

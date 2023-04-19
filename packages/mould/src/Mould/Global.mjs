@@ -1,10 +1,10 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 
 export let strict = false;
 
 export const setStrict = flag => {
-	if (!Utils.Type.Boolean(flag)) {
-		Utils.Error.Throw.Type('flag', 'boolean');
+	if (!Lang.Type.Boolean(flag)) {
+		Lang.Error.Throw.Type('flag', 'boolean');
 	}
 
 	strict = flag;

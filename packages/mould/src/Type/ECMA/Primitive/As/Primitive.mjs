@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 const PRIMITIVE_REGISTRY = new WeakSet();
@@ -20,7 +20,7 @@ Mould.Feature.define('Primitive', function AsPrimitive(TargetType, {
 
 export const isPrimitive = type => {
 	if (!Mould.Type.isType(type)) {
-		Utils.Throw.Type('type', 'Type');
+		Lang.Throw.Type('type', 'Type');
 	}
 
 	return PRIMITIVE_REGISTRY.has(type);

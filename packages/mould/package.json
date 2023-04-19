@@ -5,7 +5,7 @@
 	"main": "src/index.cjs",
 	"type": "module",
 	"imports": {
-		"#Utils": "./src/Utils/index.mjs",
+		"#Lang": "./src/Utils/index.mjs",
 		"#Mould": "./src/Mould/index.mjs"
 	},
 	"exports": {

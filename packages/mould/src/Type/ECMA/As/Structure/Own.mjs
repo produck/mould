@@ -1,41 +1,46 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 import * as Key from './Key.mjs';
+import { getOwnNamesAndSymbols } from './utils.mjs';
 
-export function field(_field) {
-	if (!Utils.Type.PlainObjectLike(_field)) {
-		Utils.Error.Throw.Type('field', 'plain object');
+export function field(descriptors) {
+	if (!Lang.Type.PlainObjectLike(descriptors)) {
+		Lang.Throw.Type('descriptors', 'plain object');
 	}
 
-	const field = {}, keys = Key.getOwnNamesAndSymbols(_field);
+	const field = {}, keys = getOwnNamesAndSymbols(descriptors);
 
 	for (const key of keys) {
-		const type = _field[key];
+		const type = descriptors[key];
 
 		if (!Mould.Type.isType(type)) {
-			Utils.Error.Throw.Type(`field["${key}"]`, 'Type');
+			Lang.Throw.Type(`descriptors['${key}']`, 'Type');
 		}
 
 		field[key] = type;
 	}
 
 	return this.derive({
-		structure: { field, keys },
+		structure: {
+			...this.expression.structure,
+			field,
+			keys,
+		},
 	});
 }
 
 export function index(keyType, valueType) {
 	if (!Mould.Type.isType(keyType)) {
-		Utils.Error.Throw.Type('keyType', 'Type');
+		Lang.Error.Throw.Type('keyType', 'Type');
 	}
 
 	if (!Mould.Type.isType(valueType)) {
-		Utils.Error.Throw.Type('valueType', 'Type');
+		Lang.Error.Throw.Type('valueType', 'Type');
 	}
 
 	if (!Key.isKey(keyType)) {
-		Utils.Error.Throw.Type('keyType', 'number, string or symbol');
+		Lang.Error.Throw.Type('keyType', 'Type as key');
 	}
 
 	const { structure } = this._expression;
@@ -52,8 +57,8 @@ export function index(keyType, valueType) {
 }
 
 export function by(constructor) {
-	if (!Utils.Type.Function(constructor)) {
-		Utils.Error.Throw.Type('constructor', 'function');
+	if (!Lang.Type.Function(constructor)) {
+		Lang.Error.Throw.Type('constructor', 'function');
 	}
 
 	return this.derive({ constructor });

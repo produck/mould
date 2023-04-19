@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import { TypeSchema } from './Schema.mjs';
 import * as Global from './Global.mjs';
 import { Catcher } from './Catcher.mjs';
@@ -11,8 +11,8 @@ export class TypeInterface extends TypeSchema {
 	Normalizer(catcher = new Catcher(), Reference = null) {
 		this._assertReady();
 
-		if (!Utils.Type.Instance(catcher, Catcher)) {
-			Utils.Error.Throw.Type('catcher', 'Catcher');
+		if (!Lang.Type.Instance(catcher, Catcher)) {
+			Lang.Error.Throw.Type('catcher', 'Catcher');
 		}
 
 		return function normalize(_value, strict = false) {

@@ -1,6 +1,7 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
+import { getOwnNamesAndSymbols } from './utils.mjs';
 import * as Member from './Member.mjs';
 import * as Own from './Own.mjs';
 import * as Project from './Project.mjs';
@@ -43,7 +44,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 	prototype._parse = function _parseAsStructure(_object, ...args) {
 		const cause = new Mould.Cause(_object);
 
-		if (!Utils.Type.Instance(_object, Object) || _object === null) {
+		if (!Lang.Type.Instance(_object, Object) || _object === null) {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
 		}
 
@@ -75,7 +76,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 		cause.describe({ field: false });
 
-		for (const key of Key.getOwnNamesAndSymbols(temp)) {
+		for (const key of getOwnNamesAndSymbols(temp)) {
 			cause.describe({ key });
 
 			const rawKey = Key.getRawKey(key);
@@ -106,8 +107,8 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 		const _value = _parse.call(this, _object, ...args);
 
-		if (!Utils.Type.Instance(_value, Object) || _value === null) {
-			Utils.Error.Throw('The next _parse() MUST return an object.');
+		if (!Lang.Type.Instance(_value, Object) || _value === null) {
+			Lang.Error.Throw('The next _parse() MUST return an object.');
 		}
 
 		Object.setPrototypeOf(_value, Object.getPrototypeOf(_object));
@@ -120,7 +121,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 export const isStructure = type => {
 	if (!Mould.Type.isType(type)) {
-		Utils.Throw.Type('type', 'Type');
+		Lang.Throw.Type('type', 'Type');
 	}
 
 	return STRUCTURE_REGISTRY.has(type);

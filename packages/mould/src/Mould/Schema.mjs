@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 
 export class TypeSchema {
 	_parse() {}
@@ -30,7 +30,7 @@ export class TypeSchema {
 	constructor(expression = this.constructor.Expression()) {
 		this.expression = expression;
 		this._constructor();
-		Utils.deepFreeze(expression);
+		Lang.deepFreeze(expression);
 		Object.freeze(this);
 	}
 
@@ -39,12 +39,12 @@ export class TypeSchema {
 	}
 
 	static isType(_type) {
-		return Utils.Type.Instance(_type, this);
+		return Lang.Type.Instance(_type, this);
 	}
 
 	static isTypeClass(_Type) {
-		if (!Utils.Type.Function(_Type)) {
-			Utils.Throw.Type('Type', 'Type Class');
+		if (!Lang.Type.Function(_Type)) {
+			Lang.Throw.Type('Type', 'Type Class');
 		}
 
 		let current = _Type;

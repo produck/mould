@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 const registry = new Map();
@@ -19,15 +19,15 @@ function select(SourceType, TargetType) {
 
 export function appendRule(SourceType, TargetType, infer) {
 	if (!Mould.Type.isTypeClass(SourceType)) {
-		Utils.Throw.Type('SourceType', 'Type Class');
+		Lang.Throw.Type('SourceType', 'Type Class');
 	}
 
 	if (!Mould.Type.isTypeClass(TargetType)) {
-		Utils.Throw.Type('TargetType', 'Type Class');
+		Lang.Throw.Type('TargetType', 'Type Class');
 	}
 
-	if (!Utils.Type.Function(infer)) {
-		Utils.Throw.Type('infer', 'function');
+	if (!Lang.Type.Function(infer)) {
+		Lang.Throw.Type('infer', 'function');
 	}
 
 	const result = select(SourceType, TargetType);
@@ -52,7 +52,7 @@ Mould.Feature.define('Intersectable', (TargetType, options) => {
 
 	prototype.and = function and(type) {
 		if (Mould.Type.isType(type)) {
-			Utils.Throw.Type('type', 'Type');
+			Lang.Throw.Type('type', 'Type');
 		}
 
 		if (type === this) {

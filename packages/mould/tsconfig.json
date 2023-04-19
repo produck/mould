@@ -6,7 +6,7 @@
 		"strictNullChecks": true,
 		"baseUrl": "./",
 		"paths": {
-			"#Utils": [
+			"#Lang": [
 				"src/Utils/index.mjs"
 			],
 			"#Mould": [

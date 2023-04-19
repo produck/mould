@@ -1,16 +1,16 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 export class ArrayType extends Mould.Type {
 	_assertReady() {
 		if (!Mould.Type.isType(this.expression.element)) {
-			Utils.Throw('An ArrayType MUST be set element type by .element().');
+			Lang.Throw('An ArrayType MUST be set element type by .element().');
 		}
 	}
 
 	element(element) {
 		if (!Mould.Type.isType(element)) {
-			Utils.Error.Throw.Type('element', 'Type');
+			Lang.Error.Throw.Type('element', 'Type');
 		}
 
 		return this.derive({ element });
@@ -46,6 +46,6 @@ Mould.Feature.make(as => {
 
 	as('Sequence', {
 		min: 0,
-		max: Utils.ARRAY_MAX_LENGTH,
+		max: Lang.ARRAY_MAX_LENGTH,
 	});
 }, ArrayType);

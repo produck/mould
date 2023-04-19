@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 export class TupleType extends Mould.Type {
@@ -9,12 +9,12 @@ export class TupleType extends Mould.Type {
 			const type = elementList[index];
 
 			if (!Mould.Type.isType(type)) {
-				Utils.Error.Throw.Type(`typeList[${index}]`, 'Type');
+				Lang.Error.Throw.Type(`typeList[${index}]`, 'Type');
 			}
 
 			if (type.isSpread) {
 				if (type.variable && sequence.min !== sequence.max) {
-					Utils.Error.Throw('There MUST be 1 spread variable length type at most.');
+					Lang.Error.Throw('There MUST be 1 spread variable length type at most.');
 				}
 
 				sequence.max += type.max;

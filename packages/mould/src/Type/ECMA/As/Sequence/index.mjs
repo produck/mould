@@ -1,4 +1,4 @@
-import * as Utils from '#Utils';
+import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 import * as Method from './Method.mjs';
@@ -39,7 +39,7 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 	prototype._parse = function _parseAsSequence(_array, ...args) {
 		const cause = new Mould.Cause(_array);
 
-		if (!Utils.Type.Array(_array)) {
+		if (!Lang.Type.Array(_array)) {
 			cause.setType('Type').describe({ expected: 'array' }).throw();
 		}
 
@@ -57,8 +57,8 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 }, ['Structure']);
 
 export const isSequence = type => {
-	if (!Utils.Type.Instance(type, Mould.Type)) {
-		Utils.Throw.Type('type', 'Type');
+	if (!Lang.Type.Instance(type, Mould.Type)) {
+		Lang.Throw.Type('type', 'Type');
 	}
 
 	return SEQUENCE_REFERENCE_SET.has(type);
