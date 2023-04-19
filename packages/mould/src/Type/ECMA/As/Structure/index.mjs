@@ -1,15 +1,19 @@
 import * as Utils from '#Utils';
 import * as Mould from '#Mould';
 
-const STRUCTURE_REFERENCE_SET = new WeakSet();
+import * as Member from './Member.mjs';
+import * as Own from './Own.mjs';
+import * as Project from './Project.mjs';
+
+const STRUCTURE_REGISTRY = new WeakSet();
 
 Mould.Feature.define('Structure', (TargetType, options) => {
-	const { _expression, prototype } = TargetType;
+	const { _Expression, prototype } = TargetType;
 	const { _parse, _constructor } = prototype;
 
-	TargetType._expression = function _expressionAsStructure() {
+	TargetType._Expression = function _ExpressionAsStructure() {
 		return {
-			..._expression(),
+			..._Expression(),
 			structure: {
 				constructor: Object,
 				keys: [],
@@ -19,8 +23,20 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		};
 	};
 
+	Object.defineProperties(prototype, {
+		field: { value: Own.field },
+		index: { value: Own.index },
+		by: { value: Own.by },
+		at: { value: Member.at },
+		keys: { value: Member.keys },
+		exact: { value: Project.exact },
+		pick: { value: Project.pick },
+		omit: { value: Project.omit },
+		alter: { value: Project.alter },
+	});
+
 	prototype._constructor = function _constructorAsPrimitive() {
-		STRUCTURE_REFERENCE_SET.add(this);
+		STRUCTURE_REGISTRY.add(this);
 		_constructor.call(this);
 	};
 
@@ -107,7 +123,7 @@ export const isStructure = type => {
 		Utils.Throw.Type('type', 'Type');
 	}
 
-	return STRUCTURE_REFERENCE_SET.has(type);
+	return STRUCTURE_REGISTRY.has(type);
 };
 
 export { isKey } from './Key.mjs';

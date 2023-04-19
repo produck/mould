@@ -2,7 +2,7 @@ import * as assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 
 import * as Mould from '#Mould';
-import * as Primitive from './Primitive/index.mjs';
+import * as Primitive from './index.mjs';
 
 describe('::Type::ECMA::Primitive::', function () {
 	describe('::isPrimitive', function () {

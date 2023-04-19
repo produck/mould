@@ -39,7 +39,7 @@ export function omit(keys) {
 	return project(keys, { ...this._expression.field }, DELETE_KEY);
 }
 
-export function require(keys) {
+export function alter(keys) {
 	const { field: source } = this._expression.structure;
 	const target = {}, temp = { ...keys };
 
