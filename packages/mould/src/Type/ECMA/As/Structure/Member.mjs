@@ -1,19 +1,19 @@
 import * as Lang from '#Lang';
 
 export function at(key) {
-	if (!Lang.Type.String(key) || !Lang.Type.Symbol(key)) {
-		Lang.Error.Throw.Type('key', 'string or symbol');
+	if (!Lang.isKeyAccessor(key)) {
+		Lang.Throw.Type('key', 'integer(>=0), string or symbol');
 	}
 
-	const { field } = this._expression.structure;
+	const { field } = this.expression.structure;
 
 	if (!Object.hasOwn(field, key)) {
-		Lang.Error.Throw(`The key "${key}" is NOT defined.`);
+		Lang.Throw(`The key "${key}" is NOT defined.`);
 	}
 
 	return field[key];
 }
 
 export function keys() {
-	return [...this._expression.structure.keys];
+	return [...this.expression.structure.keys];
 }

@@ -127,11 +127,53 @@ describe('::Type::ECMA::AsStructure', function () {
 	});
 
 	describe('.at()', function () {
+		it('should throw if bad key.', function () {
+			for (const key of [null, 0.1, -1]) {
+				assert.throws(() => new ObjectType().at(key), {
+					name: 'TypeError',
+					message: 'Invalid "key", one "integer(>=0), string or symbol" expected.',
+				});
+			}
+		});
 
+		it('throw if key is NOT defined.', function () {
+			assert.throws(() => new ObjectType().at('foo'), {
+				name: 'Error',
+				message: 'The key "foo" is NOT defined.',
+			});
+		});
+
+		it('should get a type by key.', function () {
+			const object = new ObjectType();
+			const boolean = new Primitive.BooleanType();
+			const newObject = object.field({ foo: boolean });
+
+			assert.equal(newObject.at('foo'), boolean);
+		});
 	});
 
 	describe('.keys()', function () {
+		it('should get []', function () {
+			const object = new ObjectType();
 
+			assert.deepEqual(object.keys(), []);
+		});
+
+		it('should get [string, symbol]', function () {
+			const boolean = new Primitive.BooleanType();
+
+			const object = new ObjectType().field({
+				foo: boolean,
+				0: boolean,
+				[Symbol.iterator]: boolean,
+			});
+
+			const keys = object.keys();
+
+			assert.ok(keys.includes('foo'));
+			assert.ok(keys.includes('0'));
+			assert.ok(keys.includes(Symbol.iterator));
+		});
 	});
 
 	describe('.exact()', function () {
