@@ -3,6 +3,7 @@ import { describe, it } from 'mocha';
 
 import * as Mould from '#Mould';
 import { isStructure } from './As/Structure/index.mjs';
+import { KEY_REGISTRY } from './As/Structure/Key.mjs';
 import { ObjectType } from './Object.mjs';
 import * as Primitive from './Primitive/index.mjs';
 
@@ -66,11 +67,63 @@ describe('::Type::ECMA::AsStructure', function () {
 	});
 
 	describe('.index()', function () {
+		it('should throw if bad key type.', function () {
+			assert.throws(() => new ObjectType().index(null), {
+				name: 'TypeError',
+				message: 'Invalid "keyType", one "Type" expected.',
+			});
+		});
 
+		it('should throw if bad value type.', function () {
+			const number = new Primitive.NumberType();
+
+			KEY_REGISTRY.add(number);
+
+			assert.throws(() => new ObjectType().index(number, null), {
+				name: 'TypeError',
+				message: 'Invalid "valueType", one "Type" expected.',
+			});
+		});
+
+		it('should throw if type of key is not KeyType.', function () {
+			const number = new Primitive.NumberType();
+
+			assert.throws(() => new ObjectType().index(number, number), {
+				name: 'TypeError',
+				message: 'Invalid "keyType", one "Type as key" expected.',
+			});
+		});
+
+		it('should derive a new object.', function () {
+			const object = new ObjectType();
+			const number = new Primitive.NumberType();
+
+			KEY_REGISTRY.add(number);
+			assert.deepEqual(object.expression.structure.index, []);
+
+			const newObject = object.index(number, number);
+
+			assert.deepEqual(newObject.expression.structure.index, [{
+				key: number,
+				value: number,
+			}]);
+		});
 	});
 
 	describe('.by()', function () {
+		it('should throw if bad constructor.', function () {
+			assert.throws(() => new ObjectType().by(null), {
+				name: 'TypeError',
+				message: 'Invalid "constructor", one "function" expected.',
+			});
+		});
 
+		it('should derive a new object.', function () {
+			const object = new ObjectType();
+			const newObject = object.by(Date);
+
+			assert.equal(newObject.expression.structure.constructor, Date);
+		});
 	});
 
 	describe('.at()', function () {

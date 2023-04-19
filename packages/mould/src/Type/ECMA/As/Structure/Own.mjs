@@ -32,18 +32,18 @@ export function field(descriptors) {
 
 export function index(keyType, valueType) {
 	if (!Mould.Type.isType(keyType)) {
-		Lang.Error.Throw.Type('keyType', 'Type');
+		Lang.Throw.Type('keyType', 'Type');
 	}
 
 	if (!Mould.Type.isType(valueType)) {
-		Lang.Error.Throw.Type('valueType', 'Type');
+		Lang.Throw.Type('valueType', 'Type');
 	}
 
 	if (!Key.isKey(keyType)) {
-		Lang.Error.Throw.Type('keyType', 'Type as key');
+		Lang.Throw.Type('keyType', 'Type as key');
 	}
 
-	const { structure } = this._expression;
+	const { structure } = this.expression;
 
 	return this.derive({
 		structure: {
@@ -58,8 +58,13 @@ export function index(keyType, valueType) {
 
 export function by(constructor) {
 	if (!Lang.Type.Function(constructor)) {
-		Lang.Error.Throw.Type('constructor', 'function');
+		Lang.Throw.Type('constructor', 'function');
 	}
 
-	return this.derive({ constructor });
+	return this.derive({
+		structure: {
+			...this.expression.structure,
+			constructor,
+		},
+	});
 }

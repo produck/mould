@@ -1,7 +1,7 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
-const KEY_REFERENCE_SET = new WeakSet();
+export const KEY_REGISTRY = new WeakSet();
 
 Mould.Feature.define('Key', (TargetType, isKey) => {
 	const { _constructor } = TargetType.prototype;
@@ -10,7 +10,7 @@ Mould.Feature.define('Key', (TargetType, isKey) => {
 		_constructor.call(this);
 
 		if (isKey(this)) {
-			KEY_REFERENCE_SET.add(this);
+			KEY_REGISTRY.add(this);
 		}
 	};
 });
@@ -20,5 +20,5 @@ export const isKey = type => {
 		Lang.Throw.Type('type', 'Type');
 	}
 
-	return KEY_REFERENCE_SET.has(type);
+	return KEY_REGISTRY.has(type);
 };
