@@ -1,7 +1,6 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
-import { getOwnNamesAndSymbols } from './utils.mjs';
 import * as Member from './Member.mjs';
 import * as Own from './Own.mjs';
 import * as Project from './Project.mjs';
@@ -18,7 +17,6 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 			..._Expression(),
 			structure: {
 				constructor: Object,
-				keys: [],
 				field: {},
 				index: [],
 			},
@@ -31,7 +29,6 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		by: { value: Own.by },
 		at: { value: Member.at },
 		keys: { value: Member.keys },
-		exact: { value: Project.exact },
 		pick: { value: Project.pick },
 		omit: { value: Project.omit },
 		required: { value: Modifier.required },
@@ -50,7 +47,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
 		}
 
-		const { constructor, keys, field } = this._expression.structure;
+		const { constructor, field } = this._expression.structure;
 
 		if (_object.constructor !== constructor) {
 			cause.setType('Constructor').describe({ constructor }).throw();
@@ -60,7 +57,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 		cause.setType('Property').describe({ field: true });
 
-		for (const key of keys) {
+		for (const key of this.keys()) {
 			const type = field[key];
 
 			try {
@@ -78,7 +75,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 		cause.describe({ field: false });
 
-		for (const key of getOwnNamesAndSymbols(temp)) {
+		for (const key of Lang.getOwnNamesAndSymbols(temp)) {
 			cause.describe({ key });
 
 			const rawKey = Key.getRawKey(key);

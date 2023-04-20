@@ -1,11 +1,10 @@
 import * as Lang from '#Lang';
-import { getOwnNamesAndSymbols } from './utils.mjs';
 
 function ModifiedField(type, descriptors, feature) {
 	const { field } = type.expression.structure;
 	const target = {}, temp = { ...descriptors };
 
-	for (const key of getOwnNamesAndSymbols(field)) {
+	for (const key of Lang.getOwnNamesAndSymbols(field)) {
 		const descriptor = field[key];
 		const flag = temp[key];
 
@@ -22,7 +21,7 @@ function ModifiedField(type, descriptors, feature) {
 		delete temp[key];
 	}
 
-	const keyList = getOwnNamesAndSymbols(temp);
+	const keyList = Lang.getOwnNamesAndSymbols(temp);
 
 	if (keyList.length > 0) {
 		Lang.Error.Throw(`Undefined keys: ${keyList.join(', ')}`);
@@ -36,11 +35,11 @@ function Descriptors(type, _descriptors) {
 	const { field } = type.expression.structure;
 
 	if (Lang.Type.Boolean(_descriptors)) {
-		for (const key of getOwnNamesAndSymbols(field)) {
+		for (const key of Lang.getOwnNamesAndSymbols(field)) {
 			descriptors[key] = _descriptors;
 		}
 	} else if (Lang.Type.PlainObjectLike(_descriptors)) {
-		for (const key of getOwnNamesAndSymbols(_descriptors)) {
+		for (const key of Lang.getOwnNamesAndSymbols(_descriptors)) {
 			if (Object.hasOwn(field, key)) {
 				Lang.Throw(`Descriptors[${key}] is NOT declared.`);
 			}

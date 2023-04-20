@@ -2,14 +2,26 @@ import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
 import * as Key from './Key.mjs';
-import { getOwnNamesAndSymbols } from './utils.mjs';
 
-export function field(descriptors) {
+export function field(...args) {
+	const { structure } = this.expression;
+
+	if (args.length === 0) {
+		return this.derive({
+			structure: {
+				...structure,
+				index: [],
+			},
+		});
+	}
+
+	const [descriptors] = args;
+
 	if (!Lang.Type.PlainObjectLike(descriptors)) {
 		Lang.Throw.Type('descriptors', 'plain object');
 	}
 
-	const field = {}, keys = getOwnNamesAndSymbols(descriptors);
+	const field = {}, keys = Lang.getOwnNamesAndSymbols(descriptors);
 
 	for (const key of keys) {
 		const type = descriptors[key];
@@ -23,14 +35,26 @@ export function field(descriptors) {
 
 	return this.derive({
 		structure: {
-			...this.expression.structure,
+			...structure,
 			field,
-			keys,
 		},
 	});
 }
 
-export function index(keyType, valueType, readonly = false) {
+export function index(...args) {
+	const { structure } = this.expression;
+
+	if (args.length === 0) {
+		return this.derive({
+			structure: {
+				...structure,
+				field: {},
+			},
+		});
+	}
+
+	const [keyType, valueType, readonly = false] = args;
+
 	if (!Mould.Type.isType(keyType)) {
 		Lang.Throw.Type('keyType', 'Type');
 	}
@@ -46,8 +70,6 @@ export function index(keyType, valueType, readonly = false) {
 	if (!Key.isKey(keyType)) {
 		Lang.Throw.Type('keyType', 'Type as key');
 	}
-
-	const { structure } = this.expression;
 
 	return this.derive({
 		structure: {

@@ -13,7 +13,3 @@ export function at(key) {
 
 	return field[key].type;
 }
-
-export function keys() {
-	return [...this.expression.structure.keys];
-}
