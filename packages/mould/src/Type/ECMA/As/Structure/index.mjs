@@ -5,6 +5,7 @@ import { getOwnNamesAndSymbols } from './utils.mjs';
 import * as Member from './Member.mjs';
 import * as Own from './Own.mjs';
 import * as Project from './Project.mjs';
+import * as Modifier from './Modifier.mjs';
 
 const STRUCTURE_REGISTRY = new WeakSet();
 
@@ -33,7 +34,8 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		exact: { value: Project.exact },
 		pick: { value: Project.pick },
 		omit: { value: Project.omit },
-		alter: { value: Project.alter },
+		required: { value: Modifier.required },
+		readonly: { value: Modifier.readonly },
 	});
 
 	prototype._constructor = function _constructorAsPrimitive() {

@@ -54,7 +54,7 @@ describe('::Type::ECMA::AsStructure', function () {
 			assert.notEqual(object, newObject);
 
 			assert.deepEqual(newObject.expression.structure.field, {
-				foo: boolean,
+				foo: { type: boolean, required: true, readonly: false },
 			});
 		});
 
@@ -106,6 +106,7 @@ describe('::Type::ECMA::AsStructure', function () {
 			assert.deepEqual(newObject.expression.structure.index, [{
 				key: number,
 				value: number,
+				readonly: false,
 			}]);
 		});
 	});
@@ -176,6 +177,14 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 	});
 
+	describe('.required()', function () {
+
+	});
+
+	describe('.readonly()', function () {
+
+	});
+
 	describe('.exact()', function () {
 
 	});
@@ -185,10 +194,6 @@ describe('::Type::ECMA::AsStructure', function () {
 	});
 
 	describe('.omit()', function () {
-
-	});
-
-	describe('.alter()', function () {
 
 	});
 

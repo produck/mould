@@ -18,7 +18,7 @@ export function field(descriptors) {
 			Lang.Throw.Type(`descriptors['${key}']`, 'Type');
 		}
 
-		field[key] = type;
+		field[key] = { type, required: true, readonly: false };
 	}
 
 	return this.derive({
@@ -30,13 +30,17 @@ export function field(descriptors) {
 	});
 }
 
-export function index(keyType, valueType) {
+export function index(keyType, valueType, readonly = false) {
 	if (!Mould.Type.isType(keyType)) {
 		Lang.Throw.Type('keyType', 'Type');
 	}
 
 	if (!Mould.Type.isType(valueType)) {
 		Lang.Throw.Type('valueType', 'Type');
+	}
+
+	if (!Lang.Type.Boolean(readonly)) {
+		Lang.Throw.Type('readonly', 'boolean');
 	}
 
 	if (!Key.isKey(keyType)) {
@@ -51,6 +55,7 @@ export function index(keyType, valueType) {
 			index: [...structure.index, {
 				key: keyType,
 				value: valueType,
+				readonly,
 			}],
 		},
 	});

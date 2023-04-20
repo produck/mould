@@ -11,7 +11,7 @@ export function at(key) {
 		Lang.Throw(`The key "${key}" is NOT defined.`);
 	}
 
-	return field[key];
+	return field[key].type;
 }
 
 export function keys() {

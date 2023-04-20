@@ -37,39 +37,3 @@ export function pick(keys) {
 export function omit(keys) {
 	return project(keys, { ...this._expression.field }, DELETE_KEY);
 }
-
-export function alter(keys) {
-	const { field: source } = this._expression.structure;
-	const target = {}, temp = { ...keys };
-
-	for (const key of getOwnNamesAndSymbols(source)) {
-		const type = source[key];
-		const expection = temp[key];
-
-		if (!Object.hasOwn(temp, key)) {
-			target[key] = type;
-		}
-
-		if (expection === true) {
-			target[key] = type.required();
-		}
-
-		if (expection === false) {
-			target[key] = type.optional();
-		}
-
-		if (Object.hasOwn(source, key)) {
-			Lang.Error.Type(`keys[${key}]`, 'boolean');
-		}
-
-		delete temp[key];
-	}
-
-	const keyList = getOwnNamesAndSymbols(temp);
-
-	if (keyList.length > 0) {
-		Lang.Error.Throw(`Undefined keys: ${keyList.join(', ')}`);
-	}
-
-	return this.derive({ field: target });
-}
