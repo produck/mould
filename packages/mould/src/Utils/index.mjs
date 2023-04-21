@@ -29,3 +29,9 @@ export const getOwnNamesAndSymbols = object => [
 	...Object.getOwnPropertyNames(object),
 	...Object.getOwnPropertySymbols(object),
 ];
+
+export const isReadonlyProperty = (object, key) => {
+	const { writable, set } = Object.getOwnPropertyDescriptor(object, key);
+
+	return writable !== true && !Type.Function(set);
+};

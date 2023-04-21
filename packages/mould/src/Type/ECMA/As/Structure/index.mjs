@@ -40,37 +40,47 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		_constructor.call(this);
 	};
 
-	prototype._parse = function _parseAsStructure(_object, ...args) {
+	prototype._parse = function _parseAsStructure(_object, result) {
 		const cause = new Mould.Cause(_object);
 
-		if (!Lang.Type.Instance(_object, Object) || _object === null) {
+		if (!Lang.Type.Instance(_object, Object)) {
 			cause.setType('Type').describe({ expected: 'object' }).throw();
 		}
 
-		const { constructor, field } = this._expression.structure;
+		const { constructor, field, index } = this.expression.structure;
 
 		if (_object.constructor !== constructor) {
-			cause.setType('Constructor').describe({ constructor }).throw();
+			cause.setType('Structure.Constructor').describe({ constructor }).throw();
 		}
 
 		const object = {}, temp = { ..._object };
+		const properties = result.properties = {};
 
-		cause.setType('Property').describe({ field: true });
+		cause.setType('Structure.Property').describe({ field: true });
 
-		for (const key of this.keys()) {
-			const type = field[key];
+		for (const key of Lang.getOwnNamesAndSymbols(field)) {
+			cause.describe({ key });
+
+			const { type, readonly, required } = field[key];
+			const declared = Object.hasOwn(_object, key);
+
+			if (required && !declared) {
+				cause.describe({ required }).throw();
+			}
+
+			if (declared && readonly !== Lang.isReadonlyProperty(_object, key)) {
+				cause.describe({ readonly }).throw();
+			}
 
 			try {
-				const _value = _object[key];
-				const empty = !Object.hasOwn(_object, key) && _value === undefined;
-
-				if (!empty && type.isRequired) {
-					object[key] = type.parse(_value, ...args);
-					delete temp[key];
-				}
+				properties[key] = declared
+					? { empty: false, field: true, result: type.parse(temp[key]) }
+					: { empty: true, field: true, result: null };
 			} catch (error) {
-				cause.describe({ key }).throw(error);
+				cause.describe({ type: false }).throw(error);
 			}
+
+			delete temp[key];
 		}
 
 		cause.describe({ field: false });
@@ -79,9 +89,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 			cause.describe({ key });
 
 			const rawKey = Key.getRawKey(key);
-
-			const matches = this._expression.index
-				.filter(signature => signature.key.isValid(rawKey));
+			const matches = index.filter(signature => signature.key.isValid(rawKey));
 
 			cause.describe({ matched: matches.length });
 
@@ -93,7 +101,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 			for (const signature of matches) {
 				try {
-					object[key] = signature.value.parse(_object[key], ...args);
+					object[key] = signature.value.parse(_object[key]);
 				} catch (error) {
 					errors.push(error);
 				}
@@ -104,17 +112,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 			}
 		}
 
-		const _value = _parse.call(this, _object, ...args);
-
-		if (!Lang.Type.Instance(_value, Object) || _value === null) {
-			Lang.Error.Throw('The next _parse() MUST return an object.');
-		}
-
-		Object.setPrototypeOf(_value, Object.getPrototypeOf(_object));
-		Object.assign(_value, object);
-		Object.seal(_value);
-
-		return _value;
+		_parse.call(this, _object, result);
 	};
 });
 

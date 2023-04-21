@@ -1,10 +1,7 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
-import * as Method from './Method.mjs';
-import * as Getter from './Getter.mjs';
-
-const SEQUENCE_REFERENCE_SET = new WeakSet();
+const SEQUENCE_REGISTRY = new WeakSet();
 
 Mould.Feature.define('Sequence', (TargetType, options) => {
 	const { _expression, prototype } = TargetType;
@@ -13,7 +10,6 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 		return {
 			..._expression(),
 			sequence: {
-				isSpread: false,
 				min: options.min,
 				max: options.max,
 			},
@@ -21,18 +17,27 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 	};
 
 	Object.defineProperties(prototype, {
-		isSpread: { get: Getter.isSpread },
-		[Symbol.iterator]: { value: Method.SpreadGenerator },
-		spread: { value: Method.Spread },
-		variable: {get: Getter.variable },
-		min: { get: Getter.min },
-		max: { get: Getter.max },
+		[Symbol.iterator]: { value: function* SpreadGenerator() {
+			yield { type: this, isSpread: true };
+		} },
+		spread: { value: function Spread() {
+			return { type: this, isSpread: true };
+		} },
+		variable: { get: function variable() {
+			return this.min !== this.max;
+		} },
+		min: { get: function min() {
+			return this.expression.sequence.min;
+		} },
+		max: { get: function max() {
+			return this.expression.sequence.max;
+		} },
 	});
 
 	const { _parse, _constructor } = prototype;
 
 	prototype._constructor = function _constructorAsPrimitive() {
-		SEQUENCE_REFERENCE_SET.add(this);
+		SEQUENCE_REGISTRY.add(this);
 		_constructor.call(this);
 	};
 
@@ -57,9 +62,9 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 }, ['Structure']);
 
 export const isSequence = type => {
-	if (!Lang.Type.Instance(type, Mould.Type)) {
+	if (!Mould.Type.isType(type)) {
 		Lang.Throw.Type('type', 'Type');
 	}
 
-	return SEQUENCE_REFERENCE_SET.has(type);
+	return SEQUENCE_REGISTRY.has(type);
 };

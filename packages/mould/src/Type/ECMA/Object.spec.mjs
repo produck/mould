@@ -1,6 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 
+import * as Mould from '#Mould';
 import { isStructure, isKey } from './As/Structure/index.mjs';
 import { ObjectType } from './Object.mjs';
 import * as Primitive from './Primitive/index.mjs';
@@ -435,7 +436,94 @@ describe('::Type::ECMA::AsStructure', function () {
 	});
 
 	describe('._parse()', function () {
+		it('should throw if bad _object.', function () {
+			const object = new ObjectType();
 
+			for (const fn of [
+				() => object.parse(1),
+				() => object.parse(null),
+			]) {
+				assert.throws(fn, cause => {
+					assert.ok(cause instanceof Mould.Cause);
+					assert.equal(cause.type, 'Type');
+
+					return true;
+				});
+			}
+		});
+
+		it('should throw if bad object constructor.', function () {
+			const object = new ObjectType().by(Date);
+
+			assert.throws(() => object.parse({}), cause => {
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Constructor');
+
+				return true;
+			});
+		});
+
+		it('should throw if bad object property.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number });
+
+			assert.throws(() => object.parse({ a: 'foo' }), cause => {
+				console.log(cause);
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Property');
+				assert.deepEqual(cause.detail, { key: 'a', field: true, type: false });
+
+				return true;
+			});
+		});
+
+		it('should throw if bad required object property.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number });
+
+			assert.throws(() => object.parse({}), cause => {
+				console.log(cause);
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Property');
+				assert.deepEqual(cause.detail, { key: 'a', field: true, required: true });
+
+				return true;
+			});
+		});
+
+		it('should throw if bad readonly object property.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number }).readonly(true);
+
+			assert.throws(() => object.parse({ a: 1 }), cause => {
+				console.log(cause);
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Property');
+				assert.deepEqual(cause.detail, { key: 'a', field: true, readonly: true });
+
+				return true;
+			});
+		});
+
+		it('should pass with all required.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number }).readonly(true);
+
+			const result = object.parse({
+				get a() {
+					return 1;
+				},
+			});
+
+			assert.ok(Object.hasOwn(result.properties, 'a'));
+		});
+
+		it('should pass with all optional.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number }).required(false);
+
+			assert.ok(object.parse({}).properties.a.empty, true);
+		});
 	});
 });
 
