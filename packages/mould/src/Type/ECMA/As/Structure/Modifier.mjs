@@ -1,7 +1,26 @@
 import * as Lang from '#Lang';
 
-function ModifiedField(type, descriptors, feature) {
-	const { field } = type.expression.structure;
+function ModifiedField(type, _descriptors, feature) {
+	const descriptors = {};
+	const { structure } = type.expression;
+	const { field } = structure;
+
+	if (Lang.Type.Boolean(_descriptors)) {
+		for (const key of Lang.getOwnNamesAndSymbols(field)) {
+			descriptors[key] = _descriptors;
+		}
+	} else if (Lang.Type.PlainObjectLike(_descriptors)) {
+		for (const key of Lang.getOwnNamesAndSymbols(_descriptors)) {
+			if (!Object.hasOwn(field, key)) {
+				Lang.Throw(`descriptors['${key}'] is NOT declared.`);
+			}
+
+			descriptors[key] = _descriptors[key];
+		}
+	} else {
+		Lang.Throw.Type('descriptors', 'boolean or plain object');
+	}
+
 	const target = {}, temp = { ...descriptors };
 
 	for (const key of Lang.getOwnNamesAndSymbols(field)) {
@@ -10,7 +29,7 @@ function ModifiedField(type, descriptors, feature) {
 
 		if (Object.hasOwn(temp, key)) {
 			if (!Lang.Type.Boolean(flag)) {
-				Lang.Error.Type(`keys[${key}]`, 'boolean');
+				Lang.Throw.Type(`descriptors['${key}']`, 'boolean');
 			}
 
 			target[key] = { ...descriptor, [feature]: flag };
@@ -21,52 +40,18 @@ function ModifiedField(type, descriptors, feature) {
 		delete temp[key];
 	}
 
-	const keyList = Lang.getOwnNamesAndSymbols(temp);
-
-	if (keyList.length > 0) {
-		Lang.Error.Throw(`Undefined keys: ${keyList.join(', ')}`);
-	}
-
-	return target;
-}
-
-function Descriptors(type, _descriptors) {
-	const descriptors = {};
-	const { field } = type.expression.structure;
-
-	if (Lang.Type.Boolean(_descriptors)) {
-		for (const key of Lang.getOwnNamesAndSymbols(field)) {
-			descriptors[key] = _descriptors;
-		}
-	} else if (Lang.Type.PlainObjectLike(_descriptors)) {
-		for (const key of Lang.getOwnNamesAndSymbols(_descriptors)) {
-			if (Object.hasOwn(field, key)) {
-				Lang.Throw(`Descriptors[${key}] is NOT declared.`);
-			}
-
-			descriptors[key] = _descriptors[key];
-		}
-	} else {
-		Lang.Throw.Type('descriptors', 'boolean or plain object');
-	}
-
-	return descriptors;
+	return type.derive({
+		structure: {
+			...structure,
+			field: target,
+		},
+	});
 }
 
 export function required(_descriptors) {
-	return this.derive({
-		structure: {
-			...this.expression.structure,
-			field: ModifiedField(this, Descriptors(this, _descriptors), 'required'),
-		},
-	});
+	return ModifiedField(this, _descriptors, 'required');
 }
 
 export function readonly(_descriptors) {
-	return this.derive({
-		structure: {
-			...this.expression.structure,
-			field: ModifiedField(this, Descriptors(this, _descriptors), 'readonly'),
-		},
-	});
+	return ModifiedField(this, _descriptors, 'readonly');
 }

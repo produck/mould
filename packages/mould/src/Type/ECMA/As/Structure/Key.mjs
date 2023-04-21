@@ -3,13 +3,14 @@ import * as Mould from '#Mould';
 
 export const KEY_REGISTRY = new WeakSet();
 
-Mould.Feature.define('Key', (TargetType, isKey) => {
-	const { _constructor } = TargetType.prototype;
+Mould.Feature.define('Key', (TargetType, options) => {
+	const { prototype } = TargetType;
+	const { _constructor } = prototype;
 
-	TargetType._constructor = function _constructorAsKey() {
+	prototype._constructor = function _constructorAsKey() {
 		_constructor.call(this);
 
-		if (isKey(this)) {
+		if (options.isKey(this)) {
 			KEY_REGISTRY.add(this);
 		}
 	};

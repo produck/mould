@@ -1,9 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 
-import * as Mould from '#Mould';
-import { isStructure } from './As/Structure/index.mjs';
-import { KEY_REGISTRY } from './As/Structure/Key.mjs';
+import { isStructure, isKey } from './As/Structure/index.mjs';
 import { ObjectType } from './Object.mjs';
 import * as Primitive from './Primitive/index.mjs';
 
@@ -67,9 +65,6 @@ describe('::Type::ECMA::AsStructure', function () {
 
 		it('should derive a new object without index.', function () {
 			const number = new Primitive.NumberType();
-
-			KEY_REGISTRY.add(number);
-
 			const object = new ObjectType()
 				.index(number, number)
 				.field({ a: number });
@@ -101,8 +96,6 @@ describe('::Type::ECMA::AsStructure', function () {
 		it('should throw if bad value type.', function () {
 			const number = new Primitive.NumberType();
 
-			KEY_REGISTRY.add(number);
-
 			assert.throws(() => new ObjectType().index(number, null), {
 				name: 'TypeError',
 				message: 'Invalid "valueType", one "Type" expected.',
@@ -112,8 +105,6 @@ describe('::Type::ECMA::AsStructure', function () {
 		it('should throw if bad readonly.', function () {
 			const number = new Primitive.NumberType();
 
-			KEY_REGISTRY.add(number);
-
 			assert.throws(() => new ObjectType().index(number, number, null), {
 				name: 'TypeError',
 				message: 'Invalid "readonly", one "boolean" expected.',
@@ -121,9 +112,9 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 
 		it('should throw if type of key is not KeyType.', function () {
-			const number = new Primitive.NumberType();
+			const bigint = new Primitive.BigIntType();
 
-			assert.throws(() => new ObjectType().index(number, number), {
+			assert.throws(() => new ObjectType().index(bigint, bigint), {
 				name: 'TypeError',
 				message: 'Invalid "keyType", one "Type as key" expected.',
 			});
@@ -133,7 +124,6 @@ describe('::Type::ECMA::AsStructure', function () {
 			const object = new ObjectType();
 			const number = new Primitive.NumberType();
 
-			KEY_REGISTRY.add(number);
 			assert.deepEqual(object.expression.structure.index, []);
 
 			const newObject = object.index(number, number);
@@ -147,8 +137,6 @@ describe('::Type::ECMA::AsStructure', function () {
 
 		it('should derive a new object without field.', function () {
 			const number = new Primitive.NumberType();
-
-			KEY_REGISTRY.add(number);
 
 			const object = new ObjectType()
 				.index(number, number)
@@ -212,36 +200,9 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 	});
 
-	// describe.only('.keys()', function () {
-	// 	it('should get []', function () {
-	// 		const object = new ObjectType();
-
-	// 		assert.deepEqual(object.keys(), []);
-	// 	});
-
-	// 	it('should get [string, symbol]', function () {
-	// 		const boolean = new Primitive.BooleanType();
-
-	// 		const object = new ObjectType().field({
-	// 			foo: boolean,
-	// 			0: boolean,
-	// 			[Symbol.iterator]: boolean,
-	// 		});
-
-	// 		const keys = object.keys();
-
-	// 		assert.ok(keys.includes('foo'));
-	// 		assert.ok(keys.includes('0'));
-	// 		assert.ok(keys.includes(Symbol.iterator));
-	// 	});
-	// });
-
 	describe('.pick()/.omit()', function () {
 		it('should get a project of an object type by pick.', function () {
 			const number = new Primitive.NumberType();
-
-			KEY_REGISTRY.add(number);
-
 			const object = new ObjectType().field({ a: number, b: number });
 
 			assert.deepEqual(object.expression.structure, {
@@ -266,9 +227,6 @@ describe('::Type::ECMA::AsStructure', function () {
 
 		it('should get a project of an object type by omit.', function () {
 			const number = new Primitive.NumberType();
-
-			KEY_REGISTRY.add(number);
-
 			const object = new ObjectType().field({ a: number, b: number });
 
 			assert.deepEqual(object.expression.structure, {
@@ -313,7 +271,179 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 	});
 
+	describe('.required()/.readonly()', function () {
+		it('should derive a new object by required().', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number, b: number });
+
+			assert.deepEqual(object.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+
+			const newObject = object.required({ b: false });
+
+			assert.deepEqual(newObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: false },
+				},
+				index: [],
+			});
+		});
+
+		it('should derive a new all required/optional object.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number, b: number });
+
+			assert.deepEqual(object.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+
+			const optionalObject = object.required(false);
+
+			assert.deepEqual(optionalObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: false },
+					b: { type: number, readonly: false, required: false },
+				},
+				index: [],
+			});
+
+			const requiredObject = object.required(true);
+
+			assert.deepEqual(requiredObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+		});
+
+		it('should derive a new object by readonly().', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number, b: number });
+
+			assert.deepEqual(object.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+
+			const newObject = object.readonly({ b: true });
+
+			assert.deepEqual(newObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: true, required: true },
+				},
+				index: [],
+			});
+		});
+
+		it('should derive a new all readonly/writable object.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number, b: number });
+
+			assert.deepEqual(object.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+
+			const readonlyObject = object.readonly(true);
+
+			assert.deepEqual(readonlyObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: true, required: true },
+					b: { type: number, readonly: true, required: true },
+				},
+				index: [],
+			});
+
+			const writableObject = object.readonly(false);
+
+			assert.deepEqual(writableObject.expression.structure, {
+				constructor: Object,
+				field: {
+					a: { type: number, readonly: false, required: true },
+					b: { type: number, readonly: false, required: true },
+				},
+				index: [],
+			});
+		});
+
+		it('should throw if bad descriptors.', function () {
+			for (const fn of [
+				() => new ObjectType().required(null),
+				() => new ObjectType().readonly(null),
+			]) {
+				assert.throws(fn, {
+					name: 'TypeError',
+					message: 'Invalid "descriptors", one "boolean or plain object" expected.',
+				});
+			}
+		});
+
+		it('should throw if bad descriptors key.', function () {
+			const number = new Primitive.NumberType();
+			const object = new ObjectType().field({ a: number, b: number });
+
+			for (const fn of [
+				() => object.required({ a: null }),
+				() => object.readonly({ a: null }),
+			]) {
+				assert.throws(fn, {
+					name: 'TypeError',
+					message: 'Invalid "descriptors[\'a\']", one "boolean" expected.',
+				});
+			}
+		});
+
+		it('should throw if bad descriptors key not declared.', function () {
+			for (const fn of [
+				() => new ObjectType().required({ a: null }),
+				() => new ObjectType().readonly({ a: null }),
+			]) {
+				assert.throws(fn, {
+					name: 'Error',
+					message: 'descriptors[\'a\'] is NOT declared.',
+				});
+			}
+		});
+	});
+
 	describe('._parse()', function () {
 
+	});
+});
+
+describe('::Type::ECMA::AsStructure::isKey', function () {
+	it('should throw if bad type', function () {
+		assert.throws(() => isKey(null), {
+			name: 'TypeError',
+			message: 'Invalid "type", one "Type" expected.',
+		});
 	});
 });
