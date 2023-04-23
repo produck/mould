@@ -27,6 +27,12 @@ export class TypeSchema {
 		});
 	}
 
+	equal(target) {
+		if (this === target) {
+			return true;
+		}
+	}
+
 	constructor(expression = this.constructor.Expression()) {
 		this.expression = expression;
 		this._constructor();

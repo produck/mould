@@ -92,24 +92,22 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 			const rawKey = Key.toRaw(key);
 			const matches = index.filter(signature => signature.key.isValid(rawKey));
 
-			cause.describe({ matched: matches.length });
-
 			if (matches.length === 0) {
 				cause.throw();
 			}
 
-			const errors = [];
+			const causes = [];
 
 			for (const signature of matches) {
 				try {
 					object[key] = signature.value.parse(_object[key]);
 				} catch (error) {
-					errors.push(error);
+					causes.push(error);
 				}
 			}
 
-			if (errors.length === matches.length) {
-				cause.describe({ errors }).throw();
+			if (causes.length === matches.length) {
+				cause.describe({ causes }).throw();
 			}
 		}
 

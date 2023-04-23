@@ -31,5 +31,9 @@ export const isKey = type => {
 };
 
 export const toRaw = value => {
-
+	for (const [, accessor] of KEY_ACCESSOR_MAP) {
+		if (accessor.test(value)) {
+			return accessor.raw(value);
+		}
+	}
 };

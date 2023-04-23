@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 
 import * as Mould from '#Mould';
 import { isStructure, isKey } from './As/Structure/index.mjs';
-import { ObjectType } from './Object.mjs';
+import { ObjectType, NaturalNumberType } from './Object.mjs';
 import * as Primitive from './Primitive/index.mjs';
 
 describe('::Type::ECMA::ObjectType', function () {
@@ -19,6 +19,43 @@ describe('::Type::ECMA::ObjectType', function () {
 		assert.throws(() => isStructure(null), {
 			name: 'TypeError',
 			message: 'Invalid "type", one "Type" expected.',
+		});
+	});
+
+	it('should pass with natural number key.', function () {
+		const number = new NaturalNumberType();
+		const boolean = new Primitive.BooleanType();
+		const object = new ObjectType().index(number, boolean);
+		const result = object.parse({ 0: true });
+
+		assert.deepEqual(result.properties, {});
+	});
+});
+
+describe('::NaturalNumberType', function () {
+	it('it should be a primitive.', function () {
+		const type = new NaturalNumberType();
+
+		assert.equal(Primitive.isPrimitive(type), true);
+	});
+
+	describe('._parse()', function () {
+		it('should pass.', function () {
+			const type = new NaturalNumberType();
+			const result = type.parse(1);
+
+			assert.equal(result.type, type);
+			assert.equal(result.origin, 1);
+		});
+
+		it('should throw.', function () {
+			const type = new NaturalNumberType();
+
+			assert.throws(() => type.parse(-1), cause => {
+				assert.ok(cause instanceof Mould.Cause);
+
+				return true;
+			});
 		});
 	});
 });
@@ -491,7 +528,6 @@ describe('::Type::ECMA::AsStructure', function () {
 			const object = new ObjectType().field({ a: number }).readonly(true);
 
 			assert.throws(() => object.parse({ a: 1 }), cause => {
-				console.log(cause);
 				assert.ok(cause instanceof Mould.Cause);
 				assert.equal(cause.type, 'Structure.Property');
 				assert.deepEqual(cause.detail, { key: 'a', field: true, readonly: true });
@@ -521,11 +557,30 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 
 		it('should throw if no index matched.', function () {
+			const object = new ObjectType();
 
+			assert.throws(() => object.parse({ a: 1 }), cause => {
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Property');
+				assert.deepEqual(cause.detail, { field: false, key: 'a' });
+
+				return true;
+			});
 		});
 
 		it('should throw if no matched value type.', function () {
+			const string = new Primitive.StringType();
+			const object = new ObjectType().index(string, string);
 
+			assert.throws(() => object.parse({ a: 1 }), cause => {
+				assert.ok(cause instanceof Mould.Cause);
+				assert.equal(cause.type, 'Structure.Property');
+				assert.equal(cause.detail.key, 'a');
+				assert.equal(cause.detail.field, false);
+				assert.equal(cause.detail.causes.length, 1);
+
+				return true;
+			});
 		});
 	});
 });

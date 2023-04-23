@@ -15,14 +15,41 @@ export class NaturalNumberType extends Mould.Type {
 
 Mould.Feature.make(NaturalNumberType, {
 	name: 'Number',
+}, {
+	name: 'Key',
+	isKey: () => true,
+	test: value => {
+		if (!Lang.Type.String(value)) {
+			return false;
+		}
+
+		const number = Number(value);
+
+		if (!Lang.Type.Integer(number) || number < 0) {
+			return false;
+		}
+
+		return String(number) === value;
+	},
+	raw: value => Number(value),
+}, {
+	name: 'Primitive',
+	isPrimitive: () => true,
 });
 
-for (const Type of [NaturalNumberType, StringType, SymbolType]) {
-	Mould.Feature.make(Type, {
-		name: 'Key',
-		isKey: () => true,
-	});
-}
+Mould.Feature.make(SymbolType, {
+	name: 'Key',
+	isKey: () => true,
+	test: Lang.Type.Symbol,
+	raw: value => value,
+});
+
+Mould.Feature.make(StringType, {
+	name: 'Key',
+	isKey: () => true,
+	test: Lang.Type.String,
+	raw: value => value,
+});
 
 export class ObjectType extends Mould.Type {}
 
