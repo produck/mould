@@ -5,6 +5,7 @@ import * as Member from './Member.mjs';
 import * as Own from './Own.mjs';
 import * as Project from './Project.mjs';
 import * as Modifier from './Modifier.mjs';
+import * as Key from './Key.mjs';
 
 const STRUCTURE_REGISTRY = new WeakSet();
 
@@ -88,7 +89,7 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		for (const key of Lang.getOwnNamesAndSymbols(temp)) {
 			cause.describe({ key });
 
-			const rawKey = Key.getRawKey(key);
+			const rawKey = Key.toRaw(key);
 			const matches = index.filter(signature => signature.key.isValid(rawKey));
 
 			cause.describe({ matched: matches.length });
@@ -124,4 +125,4 @@ export const isStructure = type => {
 	return STRUCTURE_REGISTRY.has(type);
 };
 
-export { isKey } from './Key.mjs';
+export const { isKey } = Key;

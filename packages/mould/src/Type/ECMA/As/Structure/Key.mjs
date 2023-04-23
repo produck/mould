@@ -1,7 +1,8 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 
-export const KEY_REGISTRY = new WeakSet();
+const KEY_REGISTRY = new WeakSet();
+const KEY_ACCESSOR_MAP = new Map();
 
 Mould.Feature.define('Key', (TargetType, options) => {
 	const { prototype } = TargetType;
@@ -14,6 +15,11 @@ Mould.Feature.define('Key', (TargetType, options) => {
 			KEY_REGISTRY.add(this);
 		}
 	};
+
+	KEY_ACCESSOR_MAP.set(TargetType, {
+		raw: options.raw,
+		test: options.test,
+	});
 });
 
 export const isKey = type => {
@@ -22,4 +28,8 @@ export const isKey = type => {
 	}
 
 	return KEY_REGISTRY.has(type);
+};
+
+export const toRaw = value => {
+
 };
