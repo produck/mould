@@ -38,24 +38,22 @@ export function make(_Type, ..._stack) {
 
 	const stack = [..._stack];
 
-	(function install() {
-		if (stack.length > 0) {
-			const options = stack.shift();
-			const modifier = registry.get(options.name);
+	while (stack.length > 0) {
+		const options = stack.shift();
+		const modifier = registry.get(options.name);
 
-			DEPS: for (const name of modifier.dependencies) {
-				for (const options of stack) {
-					if (options.name === name) {
-						continue DEPS;
-					}
+		DEPS: for (const name of modifier.dependencies) {
+			for (const options of stack) {
+				if (options.name === name) {
+					continue DEPS;
 				}
-
-				Lang.Throw(`Dependency feature ${name} is required.`);
 			}
 
-			modifier.decorator(_Type, options, install);
+			Lang.Throw(`Dependency feature ${name} is required.`);
 		}
-	})();
+
+		modifier.decorator(_Type, options);
+	}
 
 	return _Type;
 }

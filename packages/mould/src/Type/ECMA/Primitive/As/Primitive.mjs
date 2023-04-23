@@ -3,14 +3,12 @@ import * as Mould from '#Mould';
 
 const PRIMITIVE_REGISTRY = new WeakSet();
 
-Mould.Feature.define('Primitive', function AsPrimitive(TargetType, {
-	isPrimitive,
-}) {
+Mould.Feature.define('Primitive', (TargetType, options) => {
 	const { prototype } = TargetType;
 	const { _constructor } = prototype;
 
 	prototype._constructor = function _constructorAsPrimitive() {
-		if (isPrimitive(this.expression)) {
+		if (options.isPrimitive(this.expression)) {
 			PRIMITIVE_REGISTRY.add(this);
 		}
 

@@ -65,22 +65,20 @@ describe('::Type::ECMA::AsStructure', function () {
 		});
 
 		it('should derive a new object without index.', function () {
-			const number = new Primitive.NumberType();
-			const object = new ObjectType()
-				.index(number, number)
-				.field({ a: number });
+			const string = new Primitive.StringType();
+			const object = new ObjectType().index(string, string).field({ a: string });
 
 			assert.deepEqual(object.expression.structure, {
 				constructor: Object,
-				field: { a: { type: number, readonly: false, required: true } },
-				index: [{ key: number, value: number, readonly: false }],
+				field: { a: { type: string, readonly: false, required: true } },
+				index: [{ key: string, value: string, readonly: false }],
 			});
 
 			const newObject = object.field();
 
 			assert.deepEqual(newObject.expression.structure, {
 				constructor: Object,
-				field: { a: { type: number, readonly: false, required: true } },
+				field: { a: { type: string, readonly: false, required: true } },
 				index: [],
 			});
 		});
@@ -123,30 +121,27 @@ describe('::Type::ECMA::AsStructure', function () {
 
 		it('should derive a new object.', function () {
 			const object = new ObjectType();
-			const number = new Primitive.NumberType();
+			const string = new Primitive.StringType();
 
 			assert.deepEqual(object.expression.structure.index, []);
 
-			const newObject = object.index(number, number);
+			const newObject = object.index(string, string);
 
 			assert.deepEqual(newObject.expression.structure.index, [{
-				key: number,
-				value: number,
+				key: string,
+				value: string,
 				readonly: false,
 			}]);
 		});
 
 		it('should derive a new object without field.', function () {
-			const number = new Primitive.NumberType();
-
-			const object = new ObjectType()
-				.index(number, number)
-				.field({ a: number });
+			const string = new Primitive.StringType();
+			const object = new ObjectType().index(string, string).field({ a: string });
 
 			assert.deepEqual(object.expression.structure, {
 				constructor: Object,
-				field: { a: { type: number, readonly: false, required: true } },
-				index: [{ key: number, value: number, readonly: false }],
+				field: { a: { type: string, readonly: false, required: true } },
+				index: [{ key: string, value: string, readonly: false }],
 			});
 
 			const newObject = object.index();
@@ -154,7 +149,7 @@ describe('::Type::ECMA::AsStructure', function () {
 			assert.deepEqual(newObject.expression.structure, {
 				constructor: Object,
 				field: {},
-				index: [{ key: number, value: number, readonly: false }],
+				index: [{ key: string, value: string, readonly: false }],
 			});
 		});
 	});
@@ -523,6 +518,14 @@ describe('::Type::ECMA::AsStructure', function () {
 			const object = new ObjectType().field({ a: number }).required(false);
 
 			assert.ok(object.parse({}).properties.a.empty, true);
+		});
+
+		it('should throw if no index matched.', function () {
+
+		});
+
+		it('should throw if no matched value type.', function () {
+
 		});
 	});
 });
