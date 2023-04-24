@@ -1,5 +1,6 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
+import './As/Primitive.mjs';
 
 Mould.Feature.define('BigInt', (TargetType) => {
 	const { prototype } = TargetType;

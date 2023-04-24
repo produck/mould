@@ -1,7 +1,14 @@
-export { isPrimitive } from './As/Primitive.mjs';
+import { BigIntType } from './BigInt.mjs';
+import { BooleanType } from './Boolean.mjs';
+import { NumberType } from './Number.mjs';
+import { StringType } from './String.mjs';
+import { SymbolType } from './Symbol.mjs';
 
-export { BooleanType } from './Boolean.mjs';
-export { NumberType } from './Number.mjs';
-export { BigIntType } from './BigInt.mjs';
-export { StringType } from './String.mjs';
-export { SymbolType } from './Symbol.mjs';
+export { isPrimitive } from './As/Primitive.mjs';
+export { BigIntType, BooleanType, NumberType, StringType, SymbolType };
+
+export const Boolean = new BooleanType();
+export const Number = new NumberType();
+export const BigInt = new BigIntType();
+export const String = new StringType();
+export const Symbol = new SymbolType();

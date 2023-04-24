@@ -1,5 +1,6 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
+import './As/Primitive.mjs';
 
 Mould.Feature.define('Boolean', (TargetType) => {
 	const { prototype } = TargetType;
