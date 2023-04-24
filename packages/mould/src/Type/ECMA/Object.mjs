@@ -1,6 +1,7 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
 import { StringType, SymbolType } from './Primitive/index.mjs';
+import './As/Structure/index.mjs';
 
 export class NaturalNumberType extends Mould.Type {
 	_parse(_number) {
@@ -56,3 +57,5 @@ export class ObjectType extends Mould.Type {}
 Mould.Feature.make(ObjectType, {
 	name: 'Structure',
 });
+
+export const NaturalNumber = new NaturalNumberType();

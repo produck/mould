@@ -1,51 +1,56 @@
 import * as Lang from '#Lang';
 import * as Mould from '#Mould';
+import { NaturalNumber } from './Object.mjs';
+import * as Primitive from './Primitive/index.mjs';
+import './As/Sequence/index.mjs';
+
+const isNumberSignature = signature => signature.key === NaturalNumber;
+const notNumberSignature = signature => !isNumberSignature(signature);
 
 export class ArrayType extends Mould.Type {
 	_assertReady() {
-		if (!Mould.Type.isType(this.expression.element)) {
+		if (!this.expression.structure.index.some(isNumberSignature)) {
 			Lang.Throw('An ArrayType MUST be set element type by .element().');
 		}
 	}
 
-	element(element) {
-		if (!Mould.Type.isType(element)) {
-			Lang.Error.Throw.Type('element', 'Type');
+	element(type) {
+		if (!Mould.Type.isType(type)) {
+			Lang.Throw.Type('type', 'Type');
 		}
 
-		return this.derive({ element });
+		const { structure } = this.expression;
+
+		return this.derive({
+			structure: {
+				...structure,
+				index: [
+					...structure.index.filter(notNumberSignature),
+					{ key: NaturalNumber, value: type, readonly: false },
+				],
+			},
+		});
 	}
 
-	static _expression() {
-		return {
-			element: null,
-		};
-	}
+	_constructor() {
+		const { structure } = this.expression;
 
-	_parse(_array) {
-		const { element } = this._expression;
-		const clone = Array.from(_array), array = [];
-
-		for (const index in clone) {
-			try {
-				const value = element.parse(clone[index]);
-
-				array.push(value);
-			} catch (error) {
-				new Mould.Cause(_array)
-					.setType('ArrayElement')
-					.describe({ index })
-					.throw(error);
-			}
-		}
+		structure.constructor = Array;
+		structure.field.length = NaturalNumber;
 	}
 }
 
-Mould.Feature.make(as => {
-	as('Structure');
+Mould.Feature.make(ArrayType, {
+	name: 'Sequence',
+	min: 0,
+	max: Lang.ARRAY_MAX_LENGTH,
+}, {
+	name: 'Structure',
+});
 
-	as('Sequence', {
-		min: 0,
-		max: Lang.ARRAY_MAX_LENGTH,
-	});
-}, ArrayType);
+Object.assign(ArrayType.prototype, {
+	by: undefined,
+	at: undefined,
+	required: undefined,
+	readonly: undefined,
+});

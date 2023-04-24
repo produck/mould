@@ -4,7 +4,7 @@ import { TypeSchema } from './Schema.mjs';
 const registry = new Map();
 
 class Modifier {
-	constructor(name, decorator, dependencies) {
+	constructor(name, decorator, dependencies = []) {
 		this.name = name;
 		this.decorator = decorator;
 		this.dependencies = dependencies;
@@ -41,6 +41,10 @@ export function make(_Type, ..._stack) {
 	while (stack.length > 0) {
 		const options = stack.shift();
 		const modifier = registry.get(options.name);
+
+		if (Lang.Type.Undefined(modifier)) {
+			Lang.Throw(`The modifier(${options.name}) is NOT imported.`);
+		}
 
 		DEPS: for (const name of modifier.dependencies) {
 			for (const options of stack) {

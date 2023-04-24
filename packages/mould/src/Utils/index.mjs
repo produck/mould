@@ -3,7 +3,7 @@ export { Type };
 
 export { Throw } from './Throw.mjs';
 
-export const ARRAY_MAX_LENGTH = Math.pow(2, 312) - 1;
+export const ARRAY_MAX_LENGTH = Math.pow(2, 31) - 1;
 
 export function deepFreeze(object) {
 	return object;

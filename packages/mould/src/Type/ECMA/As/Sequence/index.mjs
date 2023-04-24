@@ -4,11 +4,11 @@ import * as Mould from '#Mould';
 const SEQUENCE_REGISTRY = new WeakSet();
 
 Mould.Feature.define('Sequence', (TargetType, options) => {
-	const { _expression, prototype } = TargetType;
+	const { _Expression, prototype } = TargetType;
 
-	TargetType._expression = function _expressionAsSequence() {
+	TargetType._Expression = function _ExpressionAsSequence() {
 		return {
-			..._expression(),
+			..._Expression(),
 			sequence: {
 				min: options.min,
 				max: options.max,
@@ -36,28 +36,23 @@ Mould.Feature.define('Sequence', (TargetType, options) => {
 
 	const { _parse, _constructor } = prototype;
 
-	prototype._constructor = function _constructorAsPrimitive() {
+	prototype._constructor = function _constructorAsSequence() {
 		SEQUENCE_REGISTRY.add(this);
 		_constructor.call(this);
 	};
 
-	prototype._parse = function _parseAsSequence(_array, ...args) {
-		const cause = new Mould.Cause(_array);
-
-		if (!Lang.Type.Array(_array)) {
-			cause.setType('Type').describe({ expected: 'array' }).throw();
-		}
-
+	prototype._parse = function _parseAsSequence(_array, result) {
 		const { min, max } = this._expression.sequence;
 		const length = _array.length;
 
-		cause.setType('SequenceLength').describe({ min, max, length });
-
 		if (_array.length < min || _array.length > max) {
-			cause.throw();
+			new Mould.Cause(_array)
+				.setType('SequenceLength')
+				.describe({ min, max, length })
+				.throw();
 		}
 
-		return _parse.call(this, _array, ...args);
+		_parse.call(this, _array, result);
 	};
 }, ['Structure']);
 

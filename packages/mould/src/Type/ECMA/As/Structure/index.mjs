@@ -24,16 +24,15 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		};
 	};
 
-	Object.defineProperties(prototype, {
-		field: { value: Own.field },
-		index: { value: Own.index },
-		by: { value: Own.by },
-		at: { value: Member.at },
-		keys: { value: Member.keys },
-		pick: { value: Project.pick },
-		omit: { value: Project.omit },
-		required: { value: Modifier.required },
-		readonly: { value: Modifier.readonly },
+	Object.assign(prototype, {
+		field: Own.field,
+		index: Own.index,
+		by: Own.by,
+		at: Member.at,
+		pick: Project.pick,
+		omit: Project.omit,
+		required: Modifier.required,
+		readonly: Modifier.readonly,
 	});
 
 	prototype._constructor = function _constructorAsPrimitive() {
@@ -53,6 +52,8 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 		if (_object.constructor !== constructor) {
 			cause.setType('Structure.Constructor').describe({ constructor }).throw();
 		}
+
+		_parse.call(this, _object, result);
 
 		const object = {}, temp = { ..._object };
 		const properties = result.properties = {};
@@ -83,7 +84,6 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 
 			delete temp[key];
 		}
-
 		cause.describe({ field: false });
 
 		for (const key of Lang.getOwnNamesAndSymbols(temp)) {
@@ -110,8 +110,6 @@ Mould.Feature.define('Structure', (TargetType, options) => {
 				cause.describe({ causes }).throw();
 			}
 		}
-
-		_parse.call(this, _object, result);
 	};
 });
 
