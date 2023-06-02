@@ -12,11 +12,12 @@
 	},
 	"license": "MIT",
 	"workspaces": [
-		"packages/mould"
+		"packages/mould",
+		"packages/mould-es"
 	],
 	"devDependencies": {
-		"c8": "^7.13.0",
-		"eslint": "^8.38.0",
-		"lerna": "^6.6.1"
+		"c8": "^7.14.0",
+		"eslint": "^8.41.0",
+		"lerna": "^6.6.2"
 	}
 }

@@ -32,8 +32,11 @@
 	"homepage": "https://github.com/produck/mould#readme",
 	"devDependencies": {
 		"@types/mocha": "^10.0.1",
-		"@types/node": "^18.15.11",
+		"@types/node": "^20.2.5",
 		"mocha": "^10.2.0",
-		"rollup": "^3.20.2"
+		"rollup": "^3.23.0"
+	},
+	"dependencies": {
+		"mould": "^0.1.0"
 	}
 }
