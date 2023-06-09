@@ -1,9 +1,9 @@
 import * as Lang from './Lang.mjs';
-import { MouldType } from './Type.mjs'
+import { MouldType } from './Type.mjs';
 
 const registry = new Map();
 
-export const define = (name, decorator, dependencies = []) {
+export const define = (name, decorator, dependencies = []) => {
 	if (!Lang.Type.String(name)) {
 		Lang.Throw.Type('name', 'string');
 	}
@@ -16,11 +16,11 @@ export const define = (name, decorator, dependencies = []) {
 		Lang.Throw(`Duplicated feature name(${name}).`);
 	}
 
-	registry.set(name, { name, decorator, dependencies })
-}
+	registry.set(name, { name, decorator, dependencies });
+};
 
 export const get = name => registry.get(name);
 
 export const isOptions = options => {
 
-}
+};

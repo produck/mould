@@ -6,7 +6,7 @@ export const throwError = (message, ErrorConstructor = Error) => {
 	throw new ErrorConstructor(message);
 };
 
-export { throwError as throw };
+export { throwError as Throw };
 
 export const throwType = (role, expected) => {
 	throwError(`Invalid "${role}", one "${expected}" expected.`, TypeError);

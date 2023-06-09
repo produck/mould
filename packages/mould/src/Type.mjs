@@ -1,7 +1,7 @@
 import * as Lang from './Lang.mjs';
 import * as Error from './Error.mjs';
 import * as Global from './global.mjs';
-import * as Material from './Material.mjs';
+import * as Material from './Feature.mjs';
 import { MouldTypeSchema } from './Schema.mjs';
 
 export class MouldType extends MouldTypeSchema {
