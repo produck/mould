@@ -1,10 +1,11 @@
-import * as Lang from './Lang.mjs';
 import * as Error from './Error.mjs';
 
 export class MouldType {
-	_construct() {
-		/** Do something */
-	}
+	_construct() {}
+
+	_parse() {}
+
+	_catch() {}
 
 	static _expression() {
 		return {};
@@ -19,11 +20,24 @@ export class MouldType {
 		this._construct();
 	}
 
-	get strict() {
-		return true;
+	parse(_value) {
+		const result = Object.defineProperties({}, {
+			type: { value: this },
+			value: { value: _value },
+		});
+
+		this._parse(_value, result);
+
+		return result;
 	}
 
-	parse(_value) {
+	cast(value) {
+		try {
+			this.parse(value);
 
+			return value;
+		} catch (cause) {
+			this._catch(cause);
+		}
 	}
 }

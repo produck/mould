@@ -1,6 +1,6 @@
 import { MouldType } from './Constructor.mjs';
 
-export class DecoratorContext {
+export class MouldDecoratorContext {
 	#context = {
 		name: '',
 		system: null,
@@ -8,10 +8,7 @@ export class DecoratorContext {
 	};
 
 	constructor(name, system, TargetType) {
-		Object.assign(this.#context, {
-			name, system,
-			TargetType: (expression) => new TargetType(expression),
-		});
+		Object.assign(this.#context, { name, system, TargetType });
 	}
 
 	defineMethod(name, fn) {
@@ -41,7 +38,7 @@ export class DecoratorContext {
 		const { _expression } = TargetType;
 
 		TargetType._expression = { [NAME]: function () {
-			return fn({ ...context, super: _expression });
+			return fn.call(this, { ...context, super: _expression });
 		} }[NAME];
 	}
 
@@ -70,4 +67,4 @@ export class DecoratorContext {
 	}
 }
 
-export { DecoratorContext as Context };
+export { MouldDecoratorContext as Context };

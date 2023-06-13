@@ -1,11 +1,11 @@
-export class Cause {
+export class MouldCause {
 	type = 'Unknown';
 	detail = {};
 	next = null;
 	value = null;
 
 	get [Symbol.toStringTag]() {
-		return 'MouldType';
+		return 'MouldCause';
 	}
 
 	constructor(_value) {
