@@ -7,6 +7,10 @@ export class MouldType {
 
 	_catch() {}
 
+	get _strict() {
+		return true;
+	}
+
 	static _expression() {
 		return {};
 	}
@@ -33,7 +37,9 @@ export class MouldType {
 
 	cast(value) {
 		try {
-			this.parse(value);
+			if (this._strict) {
+				this.parse(value);
+			}
 
 			return value;
 		} catch (cause) {
