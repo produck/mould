@@ -13,7 +13,8 @@
 	"license": "MIT",
 	"workspaces": [
 		"packages/mould",
-		"packages/mould-es"
+		"packages/mould-es",
+		"packages/mould-set"
 	],
 	"devDependencies": {
 		"c8": "^7.14.0",

@@ -1,0 +1,33 @@
+{
+	"name": "@produck/mould-set",
+	"version": "0.0.0",
+	"description": "Typing ECMAScript by mould.",
+	"keywords": [
+		"es",
+		"type",
+		"normalize",
+		"schema",
+		"validate"
+	],
+	"author": "chaoslee <chaos2lee@qq.com>",
+	"homepage": "https://github.com/produck/mould#readme",
+	"license": "MIT",
+	"main": "src/index.cjs",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/produck/mould.git"
+	},
+	"scripts": {
+		"test": "node ./__tests__/mould-es.test.js"
+	},
+	"bugs": {
+		"url": "https://github.com/produck/mould/issues"
+	},
+	"dependencies": {
+		"@produck/mould": "^0.0.0"
+	},
+	"devDependencies": {
+		"mocha": "^10.2.0",
+		"rollup": "^3.23.0"
+	}
+}
