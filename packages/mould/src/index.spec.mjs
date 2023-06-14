@@ -81,17 +81,17 @@ describe('::System', function () {
 			});
 		});
 
-		it('should throw if bad dependencyList.', function () {
+		it('should throw if bad dependencies.', function () {
 			const system = new Mould.System('Foo');
 
 			assert.throws(() => system.Feature('abc', () => {}, 1), {
 				name: 'TypeError',
-				message: 'Invalid "dependencyList", one "array" expected.',
+				message: 'Invalid "dependencies", one "array" expected.',
 			});
 
 			assert.throws(() => system.Feature('abc', () => {}, ['Bar', 1]), {
 				name: 'TypeError',
-				message: 'Invalid "dependencyList[1]", one "string" expected.',
+				message: 'Invalid "dependencies[1]", one "string" expected.',
 			});
 		});
 
@@ -108,15 +108,122 @@ describe('::System', function () {
 	});
 
 	describe('.Constructor()', function () {
+		it('should create a Constructor without feature.', function () {
+			const system = new Mould.System('Foo');
+			const Type = system.Constructor('Bar');
 
+			assert.equal(Type.name, 'BarType');
+		});
+
+		it('should throw if bad name.', function () {
+			const system = new Mould.System('Foo');
+
+			assert.throws(() => system.Constructor(), {
+				name: 'TypeError',
+				message: 'Invalid "name", one "string" expected.',
+			});
+		});
+
+		it('should throw if duplicated Constructor.', function () {
+			const system = new Mould.System('Foo');
+
+			system.Constructor('Bar');
+
+			assert.throws(() => system.Constructor('Bar'), {
+				name: 'Error',
+				message: 'Duplicated constructor name(Bar).',
+			});
+		});
+
+		it('should throw if bad feature in stack.', function () {
+			const system = new Mould.System('Foo');
+
+			assert.throws(() => system.Constructor('Bar', 1), {
+				name: 'TypeError',
+				message: 'Invalid "stack[0]", one "feature options" expected.',
+			});
+
+			assert.throws(() => system.Constructor('Bar', {}), {
+				name: 'TypeError',
+				message: 'Invalid "stack[0]", one "feature options" expected.',
+			});
+		});
+
+		it('should throw if feature is not defined.', function () {
+			const system = new Mould.System('Foo');
+
+			assert.throws(() => system.Constructor('Bar', {
+				name: 'Foo',
+			}), {
+				name: 'Error',
+				message: 'The feature(Foo) is NOT defined.',
+			});
+		});
+
+		it('should create a Constructor with deps.', function () {
+			const system = new Mould.System('Foo');
+
+			system.Feature('Foo', () => {});
+			system.Feature('Bar', () => {}, ['Foo']);
+
+			system.Constructor('Bar', {
+				name: 'Foo',
+			}, {
+				name: 'Bar',
+			});
+		});
+
+		it('should throw if dep missing.', function () {
+			const system = new Mould.System('Foo');
+
+			system.Feature('Foo', () => {});
+			system.Feature('Bar', () => {}, ['Foo']);
+
+			assert.throws(() => system.Constructor('Bar', {
+				name: 'Bar',
+			}), {
+				name: 'Error',
+				message: 'Dependency "Foo" is required by "Bar".',
+			});
+		});
 	});
 
 	describe('.isConstructor()', function () {
+		it('should be true.', function () {
+			const system = new Mould.System('Foo');
+			const Type = system.Constructor('Bar');
 
+			assert.equal(system.isConstructor(Type), true);
+		});
+
+		it('should be false.', function () {
+			const system = new Mould.System('Foo');
+			const Type = new Mould.System('Bar').Constructor('Bar');
+
+			assert.equal(system.isConstructor(Type), false);
+			assert.equal(system.isConstructor(1), false);
+			assert.equal(system.isConstructor(), false);
+		});
 	});
 
 	describe('.isType()', function () {
+		it('should be true.', function () {
+			const system = new Mould.System('Foo');
+			const Type = system.Constructor('Bar');
+			const Foo = new Type({});
 
+			assert.equal(system.isType(Foo), true);
+		});
+
+		it('should be false.', function () {
+			const system = new Mould.System('Foo');
+			const Type = new Mould.System('Bar').Constructor('Bar');
+			const Foo = new Type({});
+
+			assert.equal(system.isType(Foo), false);
+			assert.equal(system.isType(1), false);
+			assert.equal(system.isType(), false);
+		});
 	});
 
 	describe('::Constructor', function () {

@@ -85,6 +85,10 @@ export class MouldDecoratorContext {
 			return fn({ ...context, super: _parse.bind(this) }, _value, result);
 		} }[NAME];
 	}
+
+	Cast(fn) {
+
+	}
 }
 
 export { MouldDecoratorContext as Context };

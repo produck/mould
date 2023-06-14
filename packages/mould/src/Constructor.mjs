@@ -9,6 +9,10 @@ export class MouldType {
 
 	_catch() {}
 
+	_cast(value) {
+		return value;
+	}
+
 	get _strict() {
 		return true;
 	}
@@ -48,14 +52,16 @@ export class MouldType {
 
 		const [value] = args;
 
-		try {
-			if (this._strict) {
+		if (this._strict) {
+			try {
 				this.parse(value);
-			}
 
+				return this._cast(value);
+			} catch (cause) {
+				this._catch(cause);
+			}
+		} else {
 			return value;
-		} catch (cause) {
-			this._catch(cause);
 		}
 	}
 }

@@ -41,20 +41,20 @@ export class MouldTypeSystem {
 		this.#strict = flag;
 	}
 
-	Feature(name, decorator, dependencyList = []) {
+	Feature(name, decorator, dependencies = []) {
 		assertName(name);
 
 		if (!Lang.isFunction(decorator)) {
 			Error.throwType('decorator', 'function');
 		}
 
-		if (!Lang.isArray(dependencyList)) {
-			Error.throwType('dependencyList', 'array');
+		if (!Lang.isArray(dependencies)) {
+			Error.throwType('dependencies', 'array');
 		}
 
-		dependencyList.forEach((name, index) => {
+		dependencies.forEach((name, index) => {
 			if (!Lang.isString(name)) {
-				Error.throwType(`dependencyList[${index}]`, 'string');
+				Error.throwType(`dependencies[${index}]`, 'string');
 			}
 		});
 
@@ -62,14 +62,14 @@ export class MouldTypeSystem {
 			Error.Throw(`Duplicated feature(${name}).`);
 		}
 
-		this.#Features[name] = { name, decorator, dependencyList };
+		this.#Features[name] = { name, decorator, dependencies };
 	}
 
 	Constructor(name, ...stack) {
 		assertName(name);
 
 		if (Object.hasOwn(this.#Constructors, name)) {
-			Error.Throw('Duplicated constructor name.');
+			Error.Throw(`Duplicated constructor name(${name}).`);
 		}
 
 		const NAME = `${name}Type`;
@@ -86,7 +86,7 @@ export class MouldTypeSystem {
 			const options = stack.pop();
 
 			if (!isFeatureOptions(options)) {
-				Error.throwType(`stack[${stack.length - 1}]`, 'feature options');
+				Error.throwType(`stack[${stack.length}]`, 'feature options');
 			}
 
 			if (!Object.hasOwn(this.#Features, options.name)) {
@@ -102,13 +102,13 @@ export class MouldTypeSystem {
 					}
 				}
 
-				Error.Throw(`Dependency feature ${name} is required.`);
+				Error.Throw(`Dependency "${name}" is required by "${options.name}".`);
 			}
 
 			feature.decorator(context, options);
 		}
 
-		this.#Constructors.add(Constructor);
+		this.#Constructors[name] = Constructor;
 
 		return Constructor;
 	}
@@ -139,7 +139,7 @@ export class MouldTypeSystem {
 		const NAME = `Mould${name}SystemType`;
 		const system = this;
 
-		this.SystemType = { [NAME]: class extends MouldType {
+		this.#SystemType = { [NAME]: class extends MouldType {
 			get strict() {
 				return system.strict;
 			}
@@ -150,7 +150,7 @@ export class MouldTypeSystem {
 			}
 		} }[NAME];
 
-		Object.freeze(this.SystemType);
-		Object.freeze(this.SystemType.prototype);
+		Object.freeze(this.#SystemType);
+		Object.freeze(this.#SystemType.prototype);
 	}
 }
