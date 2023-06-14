@@ -35,22 +35,10 @@ export class MouldTypeSystem {
 
 	set strict(flag) {
 		if (!Lang.isBoolean(flag)) {
-			Error.throwType('flag', 'boolean');
+			Error.throwType('strict', 'boolean');
 		}
 
 		this.#strict = flag;
-	}
-
-	hasConstructor(name) {
-		assertName(name);
-
-		return Object.hasOwn(this.#Constructors, name);
-	}
-
-	hasFeature(name) {
-		assertName(name);
-
-		return Object.hasOwn(this.#Features, name);
 	}
 
 	Feature(name, decorator, dependencyList = []) {
@@ -66,12 +54,12 @@ export class MouldTypeSystem {
 
 		dependencyList.forEach((name, index) => {
 			if (!Lang.isString(name)) {
-				Error.throwError(`dependencyList[${index}]`, 'string');
+				Error.throwType(`dependencyList[${index}]`, 'string');
 			}
 		});
 
-		if (this.hasFeature(name)) {
-			Error.Throw(`Duplicated feature(${name})`);
+		if (Object.hasOwn(this.#Features, name)) {
+			Error.Throw(`Duplicated feature(${name}).`);
 		}
 
 		this.#Features[name] = { name, decorator, dependencyList };
@@ -79,6 +67,10 @@ export class MouldTypeSystem {
 
 	Constructor(name, ...stack) {
 		assertName(name);
+
+		if (Object.hasOwn(this.#Constructors, name)) {
+			Error.Throw('Duplicated constructor name.');
+		}
 
 		const NAME = `${name}Type`;
 
@@ -97,7 +89,7 @@ export class MouldTypeSystem {
 				Error.throwType(`stack[${stack.length - 1}]`, 'feature options');
 			}
 
-			if (!this.hasFeature(options.name)) {
+			if (!Object.hasOwn(this.#Features, options.name)) {
 				Error.Throw(`The feature(${options.name}) is NOT defined.`);
 			}
 
@@ -136,6 +128,10 @@ export class MouldTypeSystem {
 	}
 
 	constructor(name) {
+		if (!Lang.isString(name)) {
+			Error.throwType('name', 'string');
+		}
+
 		if (new.target !== MouldTypeSystem) {
 			Error.Throw('MouldTypeSystem is final.');
 		}

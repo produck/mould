@@ -1,5 +1,7 @@
 import * as Error from './Error.mjs';
 
+const UNDEFINED = Symbol.for('Mould::Undefined');
+
 export class MouldType {
 	_construct() {}
 
@@ -35,7 +37,17 @@ export class MouldType {
 		return result;
 	}
 
-	cast(value) {
+	cast(...args) {
+		if (args.length === 0) {
+			return UNDEFINED;
+		}
+
+		if (args.length > 1) {
+			Error.Throw('There should be 1 argument at most.');
+		}
+
+		const [value] = args;
+
 		try {
 			if (this._strict) {
 				this.parse(value);

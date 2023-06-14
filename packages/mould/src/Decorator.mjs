@@ -1,5 +1,13 @@
 import { MouldType } from './Constructor.mjs';
 
+const assertName = any => {
+
+};
+
+const assertFn = any => {
+
+};
+
 export class MouldDecoratorContext {
 	#context = {
 		name: '',
@@ -12,6 +20,9 @@ export class MouldDecoratorContext {
 	}
 
 	defineMethod(name, fn) {
+		assertName(name);
+		assertFn(fn);
+
 		const context = this.#context;
 		const { TargetType } = context;
 		const NAME = `${name}Proxy`;
@@ -22,6 +33,9 @@ export class MouldDecoratorContext {
 	}
 
 	defineStaticMethod(name, fn) {
+		assertName(name);
+		assertFn(fn);
+
 		const context = this.#context;
 		const { TargetType } = context;
 		const NAME = `${name}Proxy`;
@@ -32,6 +46,8 @@ export class MouldDecoratorContext {
 	}
 
 	Expression(fn) {
+		assertFn(fn);
+
 		const context = this.#context;
 		const { name, TargetType } = context;
 		const NAME = `_expressionAs${name}`;
@@ -43,6 +59,8 @@ export class MouldDecoratorContext {
 	}
 
 	Construct(fn) {
+		assertFn(fn);
+
 		const context = this.#context;
 		const { name, TargetType } = context;
 		const NAME = `_constructAs${name}`;
@@ -55,6 +73,8 @@ export class MouldDecoratorContext {
 	}
 
 	Parse(fn) {
+		assertFn(fn);
+
 		const context = this.#context;
 		const { name, TargetType } = context;
 		const NAME = `_parseAs${name}`;

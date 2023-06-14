@@ -8,6 +8,7 @@
 		"import": "./src/index.mjs",
 		"require": "./src/index.cjs"
 	},
+	"types": "index.d.ts",
 	"scripts": {
 		"test": "mocha \"**/*.spec.mjs\" --no-diff -t 999999999 --exit"
 	},

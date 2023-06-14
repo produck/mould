@@ -18,7 +18,6 @@
 		"url": "git+https://github.com/produck/mould.git"
 	},
 	"scripts": {
-		"test": "node ./__tests__/mould-es.test.js"
 	},
 	"bugs": {
 		"url": "https://github.com/produck/mould/issues"
